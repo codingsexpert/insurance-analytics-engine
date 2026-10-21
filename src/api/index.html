@@ -867,53 +867,154 @@
       width: 100%;
     }
 
-    /* DATA TABLES */
-    .table-container {
+    /* ========================================================= */
+    /* DATA TABLES, ACTION BARS & SEARCH CONTROLS                */
+    /* ========================================================= */
+    .table-container, .table-responsive {
       width: 100%;
       overflow-x: auto;
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 14px;
       background: var(--surface);
-      box-shadow: var(--shadow-xs);
+      box-shadow: var(--shadow-sm);
+      margin-top: 0.85rem;
+      scrollbar-width: thin;
     }
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
+
+    .table-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+    .table-search-input {
+      max-width: 360px;
+      padding: 0.52rem 0.95rem;
       font-size: 0.82rem;
-      text-align: left;
+      border-radius: 9px;
     }
-    .data-table th {
+
+    .btn-export-csv {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.42rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-xs);
+      white-space: nowrap;
+    }
+    .btn-export-csv:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+    [data-theme="dark"] .btn-export-csv {
+      background: #0d1526;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+    [data-theme="dark"] .btn-export-csv:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #ffffff;
+    }
+
+    table, .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.84rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    table th, .data-table th {
       background: var(--table-th-bg);
-      padding: 0.75rem 1rem;
-      font-size: 0.72rem;
+      padding: 0.95rem 1.45rem;
+      font-size: 0.73rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
       border-bottom: 2px solid var(--card-border);
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 5;
     }
-    .data-table th:hover {
+    table th:hover, .data-table th:hover {
       color: var(--primary);
+      background: var(--card-border-subtle);
     }
-    .data-table td {
-      padding: 0.72rem 1rem;
+
+    table td, .data-table td {
+      padding: 0.9rem 1.45rem;
       border-bottom: 1px solid var(--card-border-subtle);
       color: var(--text-main);
       font-weight: 500;
+      vertical-align: middle;
+      line-height: 1.5;
     }
-    .data-table tr:hover td {
-      background: var(--table-tr-hover);
+
+    table tbody tr:nth-child(even) td,
+    .data-table tbody tr:nth-child(even) td {
+      background: rgba(0, 0, 0, 0.012);
     }
+    [data-theme="dark"] table tbody tr:nth-child(even) td,
+    [data-theme="dark"] .data-table tbody tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.018);
+    }
+
+    table tbody tr:hover td,
+    .data-table tbody tr:hover td {
+      background: var(--primary-light) !important;
+      color: var(--text-main);
+    }
+    [data-theme="dark"] table tbody tr:hover td,
+    [data-theme="dark"] .data-table tbody tr:hover td {
+      background: rgba(99, 102, 241, 0.12) !important;
+    }
+
+    table tr:last-child td,
     .data-table tr:last-child td {
       border-bottom: none;
     }
-    .data-table td.num {
+
+    table td.num, .data-table td.num,
+    table th.num, .data-table th.num {
       text-align: right;
       font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
       font-weight: 600;
+    }
+
+    .badge-subtle {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.18rem 0.55rem;
+      border-radius: 6px;
+      background: var(--card-border-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      display: inline-block;
+    }
+    [data-theme="dark"] .badge-subtle {
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      border-color: rgba(255, 255, 255, 0.08);
     }
 
     /* MODAL BACKDROP & DIALOG (FIXED POSITION - NEVER IN PAGE FLOW) */
@@ -1336,8 +1437,15 @@
           <table id="gold-marts-table">
             <thead>
               <tr>
-                <th>Territory</th><th>Age Band</th><th>Vehicle Type</th><th>Policies</th>
-                <th>Exposure</th><th>Claims</th><th>Frequency</th><th>Avg Severity (₹)</th><th>Pure Premium (₹)</th>
+                <th>Territory</th>
+                <th>Age Band</th>
+                <th>Vehicle Type</th>
+                <th class="num">Policies</th>
+                <th class="num">Exposure</th>
+                <th class="num">Claims</th>
+                <th class="num">Frequency</th>
+                <th class="num">Avg Severity (₹)</th>
+                <th class="num">Pure Premium (₹)</th>
               </tr>
             </thead>
             <tbody><tr><td colspan="9" style="text-align:center;">Loading Gold Actuarial Mart...</td></tr></tbody>
@@ -2647,14 +2755,14 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><strong>${r.territory}</strong></td>
-            <td>${r.driver_age_band}</td>
+            <td><span class="badge-subtle">${r.driver_age_band}</span></td>
             <td>${r.vehicle_type}</td>
-            <td>${r.policy_count.toLocaleString('en-IN')}</td>
-            <td>${r.total_exposure.toLocaleString('en-IN')}</td>
-            <td>${r.total_claims}</td>
-            <td>${(r.empirical_frequency * 100).toFixed(2)}%</td>
-            <td>${formatINR(r.empirical_severity, 2)}</td>
-            <td><strong>${formatINR(r.empirical_pure_premium, 2)}</strong></td>
+            <td class="num">${r.policy_count.toLocaleString('en-IN')}</td>
+            <td class="num">${r.total_exposure.toLocaleString('en-IN')}</td>
+            <td class="num">${r.total_claims}</td>
+            <td class="num">${(r.empirical_frequency * 100).toFixed(2)}%</td>
+            <td class="num">${formatINR(r.empirical_severity, 2)}</td>
+            <td class="num" style="color:var(--primary); font-weight:700;">${formatINR(r.empirical_pure_premium, 2)}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -2889,11 +2997,11 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><strong>${t.risk_tier}</strong></td>
-            <td>${t.policy_count.toLocaleString('en-IN')}</td>
-            <td><strong>${t.portfolio_share_pct.toFixed(1)}%</strong></td>
-            <td>${formatINR(t.avg_pure_premium, 2)}</td>
-            <td>${formatINR(t.total_pure_premium)}</td>
-            <td><strong style="color:var(--emerald);">${formatINR(t.total_gross_premium)}</strong></td>
+            <td class="num">${t.policy_count.toLocaleString('en-IN')}</td>
+            <td class="num"><strong>${t.portfolio_share_pct.toFixed(1)}%</strong></td>
+            <td class="num">${formatINR(t.avg_pure_premium, 2)}</td>
+            <td class="num">${formatINR(t.total_pure_premium)}</td>
+            <td class="num"><strong style="color:var(--emerald);">${formatINR(t.total_gross_premium)}</strong></td>
           `;
           tbody.appendChild(tr);
         });
@@ -3042,13 +3150,13 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><strong>${r.territory}</strong></td>
-            <td>${r.policy_count.toLocaleString('en-IN')}</td>
-            <td><strong>${formatINR(r.total_insured_value)}</strong></td>
-            <td>${r.tiv_concentration_pct.toFixed(1)}%</td>
-            <td>${r.empirical_frequency_pct.toFixed(2)}%</td>
-            <td>${formatINR(r.mean_severity, 2)}</td>
-            <td style="color:#d97706; font-weight:700;">${formatINR(r.pml_100_year)}</td>
-            <td style="color:#e11d48; font-weight:700;">${formatINR(r.pml_250_year)}</td>
+            <td class="num">${r.policy_count.toLocaleString('en-IN')}</td>
+            <td class="num"><strong>${formatINR(r.total_insured_value)}</strong></td>
+            <td class="num">${r.tiv_concentration_pct.toFixed(1)}%</td>
+            <td class="num">${r.empirical_frequency_pct.toFixed(2)}%</td>
+            <td class="num">${formatINR(r.mean_severity, 2)}</td>
+            <td class="num" style="color:#d97706; font-weight:700;">${formatINR(r.pml_100_year)}</td>
+            <td class="num" style="color:#e11d48; font-weight:700;">${formatINR(r.pml_250_year)}</td>
           `;
           tbody.appendChild(tr);
         });
