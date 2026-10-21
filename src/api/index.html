@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,54 +67,7 @@
       --slider-track: #e2e8f0;
     }
 
-    [data-theme="dark"] {
-      --bg: #070a13;
-      --surface: #0e1526;
-      --card-bg: rgba(14, 21, 38, 0.95);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-border-subtle: rgba(255, 255, 255, 0.04);
-      --card-hover-border: rgba(129, 140, 248, 0.45);
-      
-      --sidebar-bg: #090e1a;
-      --sidebar-border: rgba(255, 255, 255, 0.08);
-      --header-bg: rgba(9, 14, 26, 0.95);
-      --header-border: rgba(255, 255, 255, 0.08);
-      
-      --primary: #818cf8;
-      --primary-hover: #6366f1;
-      --primary-light: rgba(99, 102, 241, 0.16);
-      --primary-border: rgba(99, 102, 241, 0.35);
-      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      
-      --emerald: #10b981;
-      --emerald-light: rgba(16, 185, 129, 0.14);
-      --emerald-border: rgba(16, 185, 129, 0.35);
-      
-      --amber: #f59e0b;
-      --amber-light: rgba(245, 158, 11, 0.14);
-      --amber-border: rgba(245, 158, 11, 0.35);
-      
-      --rose: #f43f5e;
-      --rose-light: rgba(244, 63, 94, 0.14);
-      --rose-border: rgba(244, 63, 94, 0.35);
-      
-      --blue: #38bdf8;
-      --blue-light: rgba(56, 189, 248, 0.14);
-      --blue-border: rgba(56, 189, 248, 0.35);
-      
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-subtle: #64748b;
-      
-      --shadow-card: 0 4px 24px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-      --shadow-hover: 0 12px 32px -4px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(129, 140, 248, 0.4);
-      
-      --table-th-bg: #090e1c;
-      --table-tr-hover: rgba(255, 255, 255, 0.04);
-      --input-bg: #090f1d;
-      --input-border: rgba(255, 255, 255, 0.12);
-      --slider-track: #1e293b;
-    }
+    
 
     *, *::before, *::after {
       box-sizing: border-box;
@@ -250,10 +203,7 @@
       color: var(--primary);
       transform: translateX(2px);
     }
-    [data-theme="dark"] .nav-item:hover {
-      background: rgba(99, 102, 241, 0.15);
-      color: #c7d2fe;
-    }
+    
     .nav-item.active {
       background: var(--primary-gradient);
       color: #ffffff;
@@ -391,16 +341,8 @@
       color: var(--primary);
       transform: translateY(-1px);
     }
-    [data-theme="dark"] .btn-topbar {
-      background: #0d1526;
-      border-color: rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
-    }
-    [data-theme="dark"] .btn-topbar:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: rgba(99, 102, 241, 0.4);
-      color: #ffffff;
-    }
+    
+    
 
     /* MAIN BODY & TABS */
     .app-content {
@@ -528,16 +470,8 @@
       transform: translateY(-1px);
       box-shadow: 0 3px 10px rgba(79, 70, 229, 0.15);
     }
-    [data-theme="dark"] .preset-chip {
-      background: #0d1526;
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-    }
-    [data-theme="dark"] .preset-chip:hover {
-      background: rgba(99, 102, 241, 0.25);
-      border-color: rgba(99, 102, 241, 0.45);
-      color: #ffffff;
-    }
+    
+    
 
     /* FORM CONTROLS & SLIDERS */
     .form-section-title {
@@ -692,16 +626,8 @@
       color: var(--primary);
       transform: translateY(-1px);
     }
-    [data-theme="dark"] .btn-outline {
-      background: #0d1526;
-      border-color: rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
-    }
-    [data-theme="dark"] .btn-outline:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: rgba(99, 102, 241, 0.4);
-      color: #ffffff;
-    }
+    
+    
 
     /* RATING RESULTS CONTAINER */
     .result-container {
@@ -919,16 +845,8 @@
       color: var(--primary);
       transform: translateY(-1px);
     }
-    [data-theme="dark"] .btn-export-csv {
-      background: #0d1526;
-      border-color: rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
-    }
-    [data-theme="dark"] .btn-export-csv:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: rgba(99, 102, 241, 0.4);
-      color: #ffffff;
-    }
+    
+    
 
     table, .data-table {
       width: 100%;
@@ -973,20 +891,14 @@
     .data-table tbody tr:nth-child(even) td {
       background: rgba(0, 0, 0, 0.012);
     }
-    [data-theme="dark"] table tbody tr:nth-child(even) td,
-    [data-theme="dark"] .data-table tbody tr:nth-child(even) td {
-      background: rgba(255, 255, 255, 0.018);
-    }
+    
 
     table tbody tr:hover td,
     .data-table tbody tr:hover td {
       background: var(--primary-light) !important;
       color: var(--text-main);
     }
-    [data-theme="dark"] table tbody tr:hover td,
-    [data-theme="dark"] .data-table tbody tr:hover td {
-      background: rgba(99, 102, 241, 0.12) !important;
-    }
+    
 
     table tr:last-child td,
     .data-table tr:last-child td {
@@ -1011,11 +923,7 @@
       border: 1px solid var(--card-border);
       display: inline-block;
     }
-    [data-theme="dark"] .badge-subtle {
-      background: rgba(255, 255, 255, 0.06);
-      color: #cbd5e1;
-      border-color: rgba(255, 255, 255, 0.08);
-    }
+    
 
     /* MODAL BACKDROP & DIALOG (FIXED POSITION - NEVER IN PAGE FLOW) */
     .modal-backdrop {
@@ -1272,12 +1180,6 @@
         <button class="btn-topbar" onclick="window.print()" title="Print / PDF View">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print PDF
-        </button>
-        <button id="theme-toggle-btn" class="btn-topbar" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-          <span id="theme-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </span>
-          <span id="theme-text">Dark</span>
         </button>
       </div>
     </header>
@@ -2348,37 +2250,6 @@
     </div>
   </div>
 <script>
-
-    // ==========================================
-    // THEME TOGGLE (DARK / LIGHT MODE)
-    // ==========================================
-    function initTheme() {
-      const savedTheme = localStorage.getItem('actuaria_theme') || 'dark';
-      setTheme(savedTheme);
-    }
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      setTheme(next);
-      showToast(`Switched to ${next.toUpperCase()} theme`, 'info', 2000);
-    }
-
-    function setTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('actuaria_theme', theme);
-      const icon = document.getElementById('theme-icon');
-      const text = document.getElementById('theme-text');
-      if (icon && text) {
-        if (theme === 'dark') {
-          icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-          text.innerText = 'Light';
-        } else {
-          icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-          text.innerText = 'Dark';
-        }
-      }
-    }
 
     // ==========================================
     // TOAST NOTIFICATION SYSTEM
@@ -4151,7 +4022,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      initTheme();
+      localStorage.removeItem('actuaria_theme');
+      document.documentElement.removeAttribute('data-theme');
       syncQuoteSliders();
       syncStressSliders();
       loadSummary();
