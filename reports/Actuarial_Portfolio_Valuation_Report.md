@@ -1,6 +1,6 @@
 # Actuarial Portfolio Valuation & Model Governance Audit Report
 
-**Date of Valuation**: 2026-10-15 19:20:52  
+**Date of Valuation**: 2026-10-21 15:39:18  
 **Lines of Business**: Motor & General Property & Casualty (P&C)  
 **Database**: Local SQLite Lakehouse (`insurance.db`)  
 **Regulatory Standards**: Solvency II / IFRS 17 / DOI Rate Filing  
@@ -11,12 +11,12 @@
 
 | Metric | Actuarial Value | Description |
 | :--- | :--- | :--- |
-| **Total In-Force Policies** | 50,000 | Conformed in Bronze & Silver Lakehouse layers |
-| **Earned Risk Exposure** | 44,084.3 Years | Total earned exposure periods |
+| **Total In-Force Policies** | 50,005 | Conformed in Bronze & Silver Lakehouse layers |
+| **Earned Risk Exposure** | 44,088.8 Years | Total earned exposure periods |
 | **Total Incurred Losses** | ₹5,967,341.56 | Cumulative paid & case reserves |
 | **Empirical Claim Frequency** | 8.28% | Annual claims per exposure unit |
-| **Mean Claim Severity** | ₹1,635.78 | Incurred loss per non-zero claim |
-| **Empirical Pure Premium** | ₹135.36 | Technical baseline loss cost per exposure |
+| **Mean Claim Severity** | ₹1,635.34 | Incurred loss per non-zero claim |
+| **Empirical Pure Premium** | ₹135.35 | Technical baseline loss cost per exposure |
 | **Total Estimated IBNR Reserve** | ₹2,599,038.60 | Chain Ladder Incurred But Not Reported reserve |
 | **Projected Ultimate Loss** | ₹11,858,047.14 | Expected total losses across all open accident years |
 
