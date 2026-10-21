@@ -19,9 +19,10 @@
       --card-border-subtle: #f1f5f9;
       --card-hover-border: #818cf8;
       
+      --sidebar-bg: #ffffff;
+      --sidebar-border: #e2e8f0;
       --header-bg: rgba(255, 255, 255, 0.95);
       --header-border: #e2e8f0;
-      --nav-bar-bg: rgba(255, 255, 255, 0.92);
       
       --primary: #4f46e5;
       --primary-hover: #4338ca;
@@ -74,9 +75,10 @@
       --card-border-subtle: rgba(255, 255, 255, 0.04);
       --card-hover-border: rgba(129, 140, 248, 0.45);
       
+      --sidebar-bg: #090e1a;
+      --sidebar-border: rgba(255, 255, 255, 0.08);
       --header-bg: rgba(9, 14, 26, 0.95);
       --header-border: rgba(255, 255, 255, 0.08);
-      --nav-bar-bg: rgba(9, 14, 26, 0.92);
       
       --primary: #818cf8;
       --primary-hover: #6366f1;
@@ -122,63 +124,50 @@
 
     body {
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
-      background-attachment: fixed;
       color: var(--text-main);
       font-family: var(--font-main);
       font-size: 14px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+    }
+
+    /* ========================================================= */
+    /* APP LAYOUT: LEFT SIDEBAR + MAIN AREA                      */
+    /* ========================================================= */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* LEFT SIDEBAR */
+    .app-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
       display: flex;
       flex-direction: column;
-    }
-
-    [data-theme="dark"] body {
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
-    }
-
-    /* TOP ACCENT LINE */
-    .top-accent-line {
-      height: 3px;
-      width: 100%;
-      background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 50%, #10b981 100%);
       position: sticky;
       top: 0;
-      z-index: 1002;
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      transition: width 0.2s ease, background 0.2s ease;
     }
 
-    /* MAIN EXECUTIVE HEADER */
-    .app-header {
-      position: sticky;
-      top: 3px;
-      z-index: 1001;
-      background: var(--header-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--header-border);
-      padding: 0.65rem 1.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
-      transition: background 0.2s ease, border-color 0.2s ease;
-    }
-
-    .header-brand {
+    .sidebar-brand {
+      padding: 1.15rem 1.25rem 1rem;
       display: flex;
       align-items: center;
       gap: 0.85rem;
-      text-decoration: none;
-      color: inherit;
+      border-bottom: 1px solid var(--card-border-subtle);
     }
     .brand-logo-box {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       display: flex;
@@ -212,47 +201,174 @@
       font-size: 0.72rem;
       font-weight: 500;
       color: var(--text-muted);
-      margin-top: -1px;
+      margin-top: 1px;
     }
 
-    .header-center {
+    /* NAVIGATION */
+    .sidebar-nav {
+      padding: 0.85rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+    }
+    .nav-section-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-subtle);
+      padding: 0.75rem 0.75rem 0.35rem;
+      user-select: none;
+    }
+    .nav-item {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: var(--text-muted);
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.55rem 0.85rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      width: 100%;
+      text-align: left;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .status-indicator-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0.85rem;
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2.2;
+      flex-shrink: 0;
+      transition: transform 0.18s ease;
+    }
+    .nav-item:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      transform: translateX(2px);
+    }
+    [data-theme="dark"] .nav-item:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: #c7d2fe;
+    }
+    .nav-item.active {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      border-color: transparent;
+    }
+    .nav-item.active svg {
+      stroke: #ffffff;
+    }
+    .nav-pill-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
       border-radius: 9999px;
-      background: var(--surface);
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+      margin-left: auto;
+    }
+
+    /* SIDEBAR FOOTER */
+    .sidebar-footer {
+      padding: 0.85rem;
+      border-top: 1px solid var(--card-border-subtle);
+      margin-top: auto;
+    }
+    .db-status-card {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      background: var(--bg);
       border: 1px solid var(--card-border);
-      font-size: 0.74rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      box-shadow: var(--shadow-xs);
     }
     .pulse-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #10b981;
       box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
       animation: pulseGreen 2s infinite;
+      flex-shrink: 0;
     }
     @keyframes pulseGreen {
       0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
       70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
+    .status-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .status-title {
+      font-size: 0.74rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+    }
+    .status-detail {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
 
-    .header-actions {
+    /* MAIN VIEWPORT */
+    .app-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    /* TOP HEADER */
+    .app-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      height: 56px;
+      background: var(--header-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--header-border);
+      padding: 0 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .topbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .breadcrumb-root {
+      color: var(--text-muted);
+    }
+    .breadcrumb-sep {
+      color: var(--text-subtle);
+      font-size: 0.75rem;
+    }
+    .breadcrumb-curr {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .topbar-actions {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    .btn-header {
+    .btn-topbar {
       background: var(--surface);
       border: 1px solid var(--card-border);
       color: var(--text-main);
@@ -269,91 +385,20 @@
       box-shadow: var(--shadow-xs);
       white-space: nowrap;
     }
-    .btn-header:hover {
+    .btn-topbar:hover {
       background: var(--primary-light);
       border-color: var(--primary-border);
       color: var(--primary);
       transform: translateY(-1px);
     }
-    [data-theme="dark"] .btn-header {
+    [data-theme="dark"] .btn-topbar {
       background: #0d1526;
       border-color: rgba(255, 255, 255, 0.1);
       color: #cbd5e1;
     }
-    [data-theme="dark"] .btn-header:hover {
+    [data-theme="dark"] .btn-topbar:hover {
       background: rgba(99, 102, 241, 0.2);
       border-color: rgba(99, 102, 241, 0.4);
-      color: #ffffff;
-    }
-
-    /* SEGMENTED NAVIGATION BAR */
-    .nav-bar-container {
-      position: sticky;
-      top: 55px;
-      z-index: 1000;
-      background: var(--nav-bar-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--header-border);
-      padding: 0.45rem 1.75rem;
-      box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.03);
-    }
-    .nav-segmented {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      max-width: 1540px;
-      margin: 0 auto;
-    }
-    .nav-segmented::-webkit-scrollbar {
-      display: none;
-    }
-    .nav-tab-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-family: var(--font-main);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.5rem 0.88rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-      flex-shrink: 0;
-    }
-    .nav-tab-btn svg {
-      width: 15px;
-      height: 15px;
-      stroke-width: 2.2;
-      transition: transform 0.18s ease;
-    }
-    .nav-tab-btn:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-    .nav-tab-btn.active {
-      background: var(--primary-gradient);
-      color: #ffffff;
-      font-weight: 700;
-      box-shadow: 0 3px 12px rgba(79, 70, 229, 0.35);
-      border-color: transparent;
-    }
-    .nav-tab-btn.active svg {
-      stroke: #ffffff;
-    }
-    .nav-pill-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.1rem 0.4rem;
-      border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.22);
       color: #ffffff;
     }
 
@@ -361,7 +406,7 @@
     .app-content {
       flex: 1;
       width: 100%;
-      max-width: 1540px;
+      max-width: 1480px;
       margin: 0 auto;
       padding: 1.75rem;
     }
@@ -977,7 +1022,7 @@
     /* PRINT STYLES */
     @media print {
       body { background: #fff !important; color: #000 !important; }
-      .app-header, .nav-bar-container, .top-accent-line, .btn-primary, .btn-outline, .btn-header, #toast-container, form button {
+      .app-sidebar, .app-topbar, .btn-primary, .btn-outline, .btn-topbar, #toast-container, form button {
         display: none !important;
       }
       .panel, .kpi-card, .chart-panel {
@@ -986,6 +1031,41 @@
       .tab-content { display: block !important; }
       table { width: 100% !important; font-size: 8pt !important; }
       th, td { padding: 4px 6px !important; }
+    }
+
+    /* RESPONSIVE SIDEBAR: NEVER DISAPPEAR COMPLETELY */
+    @media (max-width: 1024px) {
+      .app-sidebar {
+        width: 220px;
+        min-width: 220px;
+      }
+      .app-content {
+        padding: 1.25rem 1rem;
+      }
+    }
+    @media (max-width: 768px) {
+      .app-sidebar {
+        width: 68px;
+        min-width: 68px;
+      }
+      .sidebar-brand .brand-text-wrap,
+      .nav-section-label,
+      .nav-item span,
+      .sidebar-footer .status-info {
+        display: none;
+      }
+      .sidebar-brand {
+        justify-content: center;
+        padding: 1rem 0;
+      }
+      .nav-item {
+        justify-content: center;
+        padding: 0.7rem 0;
+      }
+      .db-status-card {
+        justify-content: center;
+        padding: 0.5rem;
+      }
     }
 </style>
   <script src="/static/chart.umd.min.js"></script>
@@ -998,93 +1078,110 @@
   </script>
 </head>
 <body>
-  <div class="top-accent-line"></div>
+<div class="app-layout">
 
-  <!-- MAIN EXECUTIVE HEADER -->
-  <header class="app-header">
-    <div class="header-brand">
+  <!-- LEFT SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
       <div class="brand-logo-box">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="8 11 12 15 16 9"/></svg>
       </div>
-      <div>
+      <div class="brand-text-wrap">
         <div class="brand-title">ACTUARIA <span class="brand-badge">PRO</span></div>
-        <div class="brand-sub">General Insurance Analytics &amp; Rating Engine</div>
+        <div class="brand-sub">General Insurance Analytics</div>
       </div>
     </div>
 
-    <div class="header-center">
-      <div class="status-indicator-pill">
-        <span class="pulse-dot"></span>
-        <span>insurance.db &bull; SQLite WAL &bull; 2,500 In-Force</span>
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <button class="btn-header" onclick="switchTab('lakehouse'); document.getElementById('ingest-panel-container')?.scrollIntoView({behavior:'smooth'});">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Import Data
-      </button>
-      <button class="btn-header" onclick="openAuditModal()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Audit Memo
-      </button>
-      <button class="btn-header" onclick="window.print()" title="Print / PDF View">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Print PDF
-      </button>
-      <button id="theme-toggle-btn" class="btn-header" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span id="theme-icon">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </span>
-        <span id="theme-text">Dark</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- UNIVERSAL SEGMENTED NAVIGATION BAR -->
-  <div class="nav-bar-container">
-    <nav class="nav-segmented">
-      <button class="nav-tab-btn active" onclick="switchTab('overview', this)">
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Portfolio &amp; Pricing</div>
+      <button class="nav-item active" onclick="switchTab('overview', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         <span>Actuarial KPIs</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('rating', this)">
+      <button class="nav-item" onclick="switchTab('rating', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Rating Engine</span>
         <span class="nav-pill-badge">Tweedie</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('stress', this)">
+      <button class="nav-item" onclick="switchTab('stress', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
         <span>Stress Testing &amp; Geo</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('reserving', this)">
+
+      <div class="nav-section-label">Reserving &amp; Governance</div>
+      <button class="nav-item" onclick="switchTab('reserving', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 2 22 22 22 12 2"/></svg>
         <span>Reserving (Triangles)</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('retention', this)">
+      <button class="nav-item" onclick="switchTab('retention', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8 8l8 8"/></svg>
         <span>Price Elasticity</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('governance', this)">
+      <button class="nav-item" onclick="switchTab('governance', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         <span>Governance &amp; Audit</span>
       </button>
-      <button class="nav-tab-btn" onclick="switchTab('triage', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>Claims &amp; Fraud</span>
-      </button>
-      <button class="nav-tab-btn" onclick="switchTab('lakehouse', this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        <span>SQLite Lakehouse</span>
-      </button>
-      <button class="nav-tab-btn" onclick="switchTab('lift', this)">
+      <button class="nav-item" onclick="switchTab('lift', this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         <span>Double Lift Deciles</span>
       </button>
-    </nav>
-  </div>
 
-  <main class="app-content">
+      <div class="nav-section-label">Operations &amp; Lakehouse</div>
+      <button class="nav-item" onclick="switchTab('triage', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Claims &amp; Fraud</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('lakehouse', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>SQLite Lakehouse</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="db-status-card">
+        <span class="pulse-dot"></span>
+        <div class="status-info">
+          <span class="status-title">insurance.db</span>
+          <span class="status-detail">SQLite WAL &bull; 2,500 In-Force</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-main">
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <div class="topbar-breadcrumb">
+          <span class="breadcrumb-root">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span id="breadcrumb-active" class="breadcrumb-curr">Actuarial KPIs</span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn-topbar" onclick="switchTab('lakehouse'); document.getElementById('ingest-panel-container')?.scrollIntoView({behavior:'smooth'});">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import Data
+        </button>
+        <button class="btn-topbar" onclick="openAuditModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Audit Memo
+        </button>
+        <button class="btn-topbar" onclick="window.print()" title="Print / PDF View">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print PDF
+        </button>
+        <button id="theme-toggle-btn" class="btn-topbar" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+          <span id="theme-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </span>
+          <span id="theme-text">Dark</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-content">
 <section id="tab-overview" class="tab-content active">
       <div class="kpi-grid">
         <div class="kpi-card" style="border-top: 3px solid #4f46e5;">
@@ -2106,8 +2203,9 @@
           </table>
         </div>
       </div>
-    </section>
-  </main>
+    </section>    </main>
+  </div>
+</div>
 
   <!-- In-Page Executive Valuation Report Modal (Hidden by default, fixed backdrop) -->
   <div id="audit-modal" class="modal-backdrop" onclick="closeAuditModal(event)" style="display: none;">
