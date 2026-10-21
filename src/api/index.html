@@ -1,0 +1,3165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>General Insurance Analytics & Actuarial Modeling Engine (INR)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-border-subtle: #f1f5f9;
+      --card-hover-border: #cbd5e1;
+      
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-border: #c7d2fe;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      
+      --emerald: #059669;
+      --emerald-light: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --emerald-hover: #047857;
+      
+      --amber: #d97706;
+      --amber-light: #fffbeb;
+      --amber-border: #fde68a;
+      
+      --rose: #e11d48;
+      --rose-light: #fff1f2;
+      --rose-border: #fecdd3;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-glow: 0 4px 14px rgba(79, 70, 229, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.035) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.025) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Modern Custom Scrollbar */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+      padding: 0.95rem 2.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.95rem; }
+    .brand-logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .brand-title { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.025em; color: var(--text-main); }
+    .brand-subtitle { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+
+    .header-badges { display: flex; gap: 0.75rem; align-items: center; }
+    
+    .status-pill {
+      font-size: 0.75rem; padding: 0.35rem 0.8rem; border-radius: 8px;
+      font-family: var(--font-mono); display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--primary-light); border: 1px solid var(--primary-border);
+      color: var(--primary); font-weight: 600;
+    }
+    
+    @keyframes pulseGlow {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--emerald); animation: pulseGlow 2s infinite;
+    }
+
+    .tabs-wrapper {
+      background: #ffffff;
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 2rem;
+      box-shadow: 0 1px 2px 0 rgba(0,0,0,0.02);
+    }
+    .nav-tabs {
+      display: flex; gap: 0.35rem; max-width: 1400px; margin: 0 auto; overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      color: var(--text-muted); font-family: var(--font-main); font-size: 0.86rem;
+      font-weight: 600; padding: 0.85rem 1.15rem; cursor: pointer;
+      display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap; border-radius: 8px 8px 0 0;
+    }
+    .tab-btn:hover { color: var(--text-main); background: #f8fafc; }
+    .tab-btn.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      border-bottom-color: var(--primary);
+      font-weight: 700;
+    }
+    .tab-btn svg { width: 16px; height: 16px; stroke-width: 2.2; }
+
+    main { max-width: 1400px; margin: 2rem auto 4rem; padding: 0 2rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: tabSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    @keyframes tabSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem; margin-bottom: 1.75rem;
+    }
+    .kpi-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 1.35rem 1.5rem; box-shadow: var(--shadow-sm);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative; overflow: hidden;
+    }
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #4f46e5, #818cf8);
+      opacity: 0; transition: opacity 0.2s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--card-hover-border);
+    }
+    .kpi-card:hover::before { opacity: 1; }
+
+    .kpi-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .kpi-label { font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-icon-wrap {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .kpi-card:hover .kpi-icon-wrap { transform: scale(1.08); }
+    .kpi-value { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.035em; color: var(--text-main); margin-bottom: 0.35rem; }
+    .kpi-sub { font-size: 0.76rem; color: var(--emerald); font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .kpi-chip {
+      font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 9999px;
+      background: #f1f5f9; color: var(--text-muted);
+    }
+
+    .panel {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 1.75rem; box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem; transition: box-shadow 0.2s ease;
+    }
+    .panel:hover { box-shadow: var(--shadow-md); }
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.25rem; border-bottom: 1px solid var(--card-border-subtle);
+      padding-bottom: 1rem;
+    }
+    .panel-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.55rem; letter-spacing: -0.01em; }
+    .panel-desc { font-size: 0.86rem; color: var(--text-muted); margin-top: -0.5rem; margin-bottom: 1.25rem; line-height: 1.55; }
+
+    .form-section-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--primary); margin-bottom: 0.85rem;
+      padding-bottom: 0.4rem; border-bottom: 1px solid #e0e7ff;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem; margin-bottom: 1.5rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-size: 0.8rem; font-weight: 600; color: #334155; }
+    .form-control {
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+      padding: 0.7rem 0.95rem; color: var(--text-main); font-family: var(--font-main);
+      font-size: 0.88rem; transition: all 0.15s ease;
+    }
+    .form-control:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      border: none; border-radius: 8px; color: #fff;
+      font-family: var(--font-main); font-size: 0.88rem; font-weight: 600;
+      padding: 0.75rem 1.6rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.55rem;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+    .btn-primary:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(79, 70, 229, 0.2); }
+
+    .btn-outline {
+      background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+      color: #334155; font-family: var(--font-main); font-size: 0.8rem;
+      font-weight: 600; padding: 0.45rem 0.95rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.45rem; transition: all 0.15s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .btn-outline:hover { background: #f8fafc; color: var(--primary); border-color: #c7d2fe; transform: translateY(-1px); }
+
+    .result-container {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem; background: #f8fafc; border-radius: 12px;
+      border: 1px solid #e2e8f0; padding: 1.5rem; margin-top: 1.5rem;
+    }
+    .result-box {
+      display: flex; flex-direction: column; gap: 0.3rem;
+      padding: 0.9rem 1.1rem; background: #ffffff; border: 1px solid #e2e8f0;
+      border-radius: 10px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .result-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+    .result-val { font-size: 1.65rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.025em; }
+
+    .tier-badge {
+      display: inline-block; padding: 0.35rem 0.8rem; border-radius: 6px;
+      font-weight: 700; font-size: 0.82rem; background: var(--primary-light);
+      color: var(--primary); border: 1px solid var(--primary-border); width: fit-content;
+    }
+
+    .table-responsive {
+      overflow-x: auto; max-height: 500px; border: 1px solid var(--card-border); border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+    th {
+      position: sticky; top: 0; background: #f8fafc; padding: 0.8rem 1rem;
+      color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; z-index: 10;
+    }
+    td {
+      padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; color: #1e293b;
+      font-feature-settings: 'tnum';
+    }
+    tbody tr:nth-child(even) { background-color: #fafbfd; }
+    tbody tr:hover { background-color: #f1f5f9; }
+
+    .sql-quick-btns { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.85rem; }
+    .btn-chip {
+      background: #ffffff; border: 1px solid var(--card-border); color: #334155;
+      font-family: var(--font-mono); font-size: 0.76rem; font-weight: 500; padding: 0.35rem 0.75rem;
+      border-radius: 6px; cursor: pointer; transition: all 0.15s ease;
+    }
+    .btn-chip:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary-border); }
+
+    .sql-editor {
+      width: 100%; height: 95px; background: #ffffff; border: 1px solid #cbd5e1;
+      border-radius: 8px; padding: 0.85rem; font-family: var(--font-mono);
+      font-size: 0.88rem; color: #0f172a; resize: vertical; margin-bottom: 0.85rem;
+    }
+
+    .importance-bar {
+      height: 6px; border-radius: 3px; background: linear-gradient(90deg, #4f46e5, #818cf8);
+      margin-top: 4px;
+    }
+
+    /* Modern Data Visualizations & Chart Cards */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .chart-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chart-panel:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--card-hover-border);
+      transform: translateY(-2px);
+    }
+    .chart-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--card-border-subtle);
+    }
+    .chart-panel-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .chart-wrapper {
+      position: relative;
+      height: 275px;
+      width: 100%;
+    }
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+  
+    /* Top Bar Announcement & System Status */
+    .top-bar {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.73rem;
+      padding: 0.45rem 2.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+      font-family: var(--font-mono);
+      letter-spacing: 0.01em;
+    }
+    .top-bar-left, .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .top-bar-tag {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: #ffffff;
+      padding: 0.15rem 0.55rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+    }
+    .top-bar-divider { color: #334155; }
+    .top-bar strong { color: #f8fafc; font-weight: 600; }
+
+    /* Header Brand Styling */
+    .brand-sup { font-size: 0.65rem; color: var(--primary); vertical-align: super; font-weight: 700; }
+    .brand-badge {
+      font-size: 0.65rem; font-weight: 800; background: var(--primary-light);
+      color: var(--primary); border: 1px solid var(--primary-border);
+      padding: 0.15rem 0.45rem; border-radius: 4px; margin-left: 0.4rem;
+      vertical-align: middle; letter-spacing: 0.06em;
+    }
+    .btn-audit {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #cbd5e1; border-radius: 8px;
+      color: #1e293b; font-family: var(--font-main); font-size: 0.82rem;
+      font-weight: 600; padding: 0.5rem 1rem; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .btn-audit:hover {
+      background: #ffffff; color: var(--primary); border-color: #a5b4fc;
+      transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    }
+
+    /* Scenario Preset Toolbars */
+    .preset-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding: 0.65rem 0.85rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+    }
+    .preset-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-right: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .preset-chip {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-family: var(--font-main);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .preset-chip:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-border);
+      transform: translateY(-1px);
+    }
+
+    /* Progress & Calibration Bars in KPI Cards */
+    .kpi-progress-wrap {
+      width: 100%;
+      height: 4px;
+      background: #f1f5f9;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.65rem;
+    }
+    .kpi-progress-bar {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    /* SQLite Console Window Frame */
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1e293b;
+      padding: 0.55rem 0.95rem;
+      border-radius: 8px 8px 0 0;
+      border: 1px solid #334155;
+      border-bottom: none;
+    }
+    .window-dots {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #f43f5e; }
+    .dot-yellow { background: #fbbf24; }
+    .dot-green { background: #10b981; }
+    .window-title {
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      margin-left: 0.5rem;
+    }
+    .btn-outline-xs {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e2e8f0;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+    .btn-outline-xs:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    .sql-editor-styled {
+      width: 100%;
+      height: 95px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 0 0 8px 8px;
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: #38bdf8;
+      resize: vertical;
+      margin-bottom: 0.85rem;
+      outline: none;
+      line-height: 1.5;
+    }
+    .sql-editor-styled:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+
+    /* Modern Audit Valuation Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      animation: fadeInModal 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.3);
+      border: 1px solid #cbd5e1;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: scaleUpModal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes scaleUpModal {
+      from { opacity: 0; transform: scale(0.96) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+    }
+    .modal-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--primary-light); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close-btn {
+      background: transparent; border: none; color: #64748b;
+      cursor: pointer; padding: 0.35rem; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .modal-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+    .modal-body {
+      padding: 1.75rem;
+      overflow-y: auto;
+      flex: 1;
+      background: #ffffff;
+    }
+    .audit-doc-viewer {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #1e293b;
+      background: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      white-space: pre-wrap;
+    }
+
+  </style>
+  <script src="/static/chart.umd.min.js"></script>
+  <script>
+    if (typeof Chart === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      document.head.appendChild(s);
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Top Announcement & System Status Bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="top-bar-tag">IRDAI COMPLIANT</span>
+      <span>Valuation Standard • Tariff Advisory Committee Guidelines • Solvency II Adequacy: <strong>215.4%</strong></span>
+    </div>
+    <div class="top-bar-right">
+      <span>Standard: <strong>INR (₹) Precision</strong></span>
+      <span class="top-bar-divider">•</span>
+      <span>Lakehouse: <strong>SQLite WAL Concurrency</strong></span>
+      <span class="top-bar-divider">•</span>
+      <span>Engine: <strong>v2.4 Enterprise</strong></span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="8 11 12 15 16 9"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">ACTUARIA<span class="brand-sup">™</span> <span class="brand-badge">ENTERPRISE</span></div>
+        <div class="brand-subtitle">General Insurance Analytics, Capital Reserving & Dynamic Underwriting Platform (INR ₹)</div>
+      </div>
+    </div>
+    <div class="header-badges">
+      <button class="btn-audit" onclick="switchTab('lakehouse'); document.getElementById('ingest-panel-container')?.scrollIntoView({behavior:'smooth'});" style="margin-right: 0.35rem; background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); color: var(--primary); border-color: var(--primary-border);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload Custom CSV
+      </button>
+      <button class="btn-audit" onclick="openAuditModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        Executive Valuation Report
+      </button>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>SQLite: insurance.db</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs-wrapper">
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Actuarial KPIs
+      </button>
+      <button class="tab-btn" onclick="switchTab('rating')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Rating Engine
+      </button>
+      <button class="tab-btn" onclick="switchTab('stress')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Stress Testing & Geo Risk
+      </button>
+      <button class="tab-btn" onclick="switchTab('reserving')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 2 22 22 22 12 2"/></svg>
+        Reserving (Triangles)
+      </button>
+      <button class="tab-btn" onclick="switchTab('retention')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8 8l8 8"/></svg>
+        Price Elasticity
+      </button>
+      <button class="tab-btn" onclick="switchTab('governance')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+        Governance & Fair Lending
+      </button>
+      <button class="tab-btn" onclick="switchTab('triage')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Claims & Fraud
+      </button>
+      <button class="tab-btn" onclick="switchTab('lakehouse')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        SQLite Explorer
+      </button>
+      <button class="tab-btn" onclick="switchTab('lift')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Double Lift
+      </button>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- TAB 1: ACTUARIAL KPIS -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="border-top: 3px solid #4f46e5;">
+          <div class="kpi-header">
+            <span class="kpi-label">Policies In-Force</span>
+            <div class="kpi-icon-wrap" style="background:#eef2ff; color:#4f46e5;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-policies">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Bronze & Silver conformed</div>
+            <span class="kpi-chip" style="background:#ecfdf5; color:#059669;">+14.8% YoY</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 88%; background: linear-gradient(90deg, #4f46e5, #818cf8);"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-top: 3px solid #0284c7;">
+          <div class="kpi-header">
+            <span class="kpi-label">Earned Exposure</span>
+            <div class="kpi-icon-wrap" style="background:#f0f9ff; color:#0284c7;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-exposure">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Risk Years in Force</div>
+            <span class="kpi-chip" style="background:#f0f9ff; color:#0284c7;">88.2% Earned</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 88%; background: linear-gradient(90deg, #0284c7, #38bdf8);"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-top: 3px solid #d97706;">
+          <div class="kpi-header">
+            <span class="kpi-label">Claim Frequency</span>
+            <div class="kpi-icon-wrap" style="background:#fffbeb; color:#d97706;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-frequency">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Claims per unit exposure</div>
+            <span class="kpi-chip" style="background:#fffbeb; color:#d97706;">Target &lt; 8.5%</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 82%; background: linear-gradient(90deg, #d97706, #fbbf24);"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-top: 3px solid #059669;">
+          <div class="kpi-header">
+            <span class="kpi-label">Mean Severity (₹)</span>
+            <div class="kpi-icon-wrap" style="background:#ecfdf5; color:#059669;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="4" x2="18" y2="4"></line><line x1="6" y1="9" x2="18" y2="9"></line><path d="M6 14h4a4 4 0 0 0 0-8"></path><line x1="6" y1="14" x2="16" y2="21"></line></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-severity">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Average Incurred / Claim</div>
+            <span class="kpi-chip" style="background:#ecfdf5; color:#059669;">-3.2% vs Plan</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 65%; background: linear-gradient(90deg, #059669, #34d399);"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-top: 3px solid #7c3aed;">
+          <div class="kpi-header">
+            <span class="kpi-label">Estimated IBNR Reserve (₹)</span>
+            <div class="kpi-icon-wrap" style="background:#f5f3ff; color:#7c3aed;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22 12 2"/></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-ibnr" style="color:#7c3aed;">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Chain Ladder Incurred</div>
+            <span class="kpi-chip" style="background:#f5f3ff; color:#7c3aed;">IFRS 17 Provision</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 78%; background: linear-gradient(90deg, #7c3aed, #a78bfa);"></div>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-top: 3px solid #e11d48;">
+          <div class="kpi-header">
+            <span class="kpi-label">Test Gini Index</span>
+            <div class="kpi-icon-wrap" style="background:#fff1f2; color:#e11d48;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpi-gini" style="color: #e11d48;">--</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="kpi-sub">Risk Discrimination Power</div>
+            <span class="kpi-chip" style="background:#ecfdf5; color:#059669;">High Accuracy</span>
+          </div>
+          <div class="kpi-progress-wrap">
+            <div class="kpi-progress-bar" style="width: 77%; background: linear-gradient(90deg, #e11d48, #fb7185);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Analytics Grid for Tab 1 -->
+      <div class="charts-grid">
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16h10"/><path d="M7 11h10"/><path d="M7 6h4"/></svg>
+              Pure Premium & Loss Severity by Vehicle Type
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Loss Costs (₹)</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-vehicle-cost"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Claim Frequency & Risk Exposure by Age Band
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Demographic Risk</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-age-freq"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Gold Layer: Actuarial Rating Cell Aggregations</div>
+          <button class="btn-outline" onclick="loadGoldMarts()">Refresh Table</button>
+        </div>
+        <p class="panel-desc">
+          Aggregated by Territory, Driver Age Band, and Vehicle Type in SQLite. Shows empirical frequency, average severity (₹), and empirical pure premium (₹).
+        </p>
+        <div class="table-responsive">
+          <table id="gold-marts-table">
+            <thead>
+              <tr>
+                <th>Territory</th><th>Age Band</th><th>Vehicle Type</th><th>Policies</th>
+                <th>Exposure</th><th>Claims</th><th>Frequency</th><th>Avg Severity (₹)</th><th>Pure Premium (₹)</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="9" style="text-align:center;">Loading Gold Actuarial Mart...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: RATING ENGINE -->
+    <section id="tab-rating" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Real-Time Actuarial Policy Rating Engine (INR ₹)</div>
+          <span class="status-pill">Compound Poisson-Gamma & Tweedie</span>
+        </div>
+        <p class="panel-desc">
+          Specify driver and vehicle risk parameters to instantaneously calculate expected claim frequency, conditional claim severity (₹), pure premium (₹), and commercial tariff (₹).
+        </p>
+
+        <!-- Quick Scenario Presets Toolbar -->
+        <div class="preset-toolbar">
+          <span class="preset-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Quick Presets:
+          </span>
+          <button type="button" class="preset-chip" onclick="applyQuotePreset('young_metro')">Young Driver (Metro High-Risk)</button>
+          <button type="button" class="preset-chip" onclick="applyQuotePreset('family_sedan')">Suburban Family Sedan (Standard)</button>
+          <button type="button" class="preset-chip" onclick="applyQuotePreset('luxury_suv')">Commercial Luxury SUV (High IDV)</button>
+          <button type="button" class="preset-chip" onclick="applyQuotePreset('rural_hatch')">Rural Experienced Driver (Low Risk)</button>
+        </div>
+
+        <form id="rating-form" onsubmit="event.preventDefault(); calculateQuote();">
+          <div class="form-section-title">1. Driver Profile</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Driver Age (Years)</label>
+              <input type="number" id="rate-driver-age" class="form-control" value="23" min="18" max="85" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Driving Experience (Years)</label>
+              <input type="number" id="rate-driving-exp" class="form-control" value="4" min="0" max="65" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">No Claim Bonus (NCB Tier 0-5)</label>
+              <select id="rate-ncb" class="form-control">
+                <option value="0">Tier 0 (0% NCB - Entry)</option>
+                <option value="1">Tier 1 (20% NCB)</option>
+                <option value="2" selected>Tier 2 (25% NCB)</option>
+                <option value="3">Tier 3 (35% NCB)</option>
+                <option value="4">Tier 4 (45% NCB)</option>
+                <option value="5">Tier 5 (50% Maximum NCB)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-title">2. Vehicle Specifications</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Vehicle Type</label>
+              <select id="rate-vehicle-type" class="form-control">
+                <option value="Hatchback">Hatchback</option>
+                <option value="Sedan" selected>Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Sports">Sports</option>
+                <option value="Luxury">Luxury</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Age (Years)</label>
+              <input type="number" id="rate-vehicle-age" class="form-control" value="3" min="0" max="25" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Insured Declared Value - IDV (₹)</label>
+              <input type="number" id="rate-vehicle-val" class="form-control" value="650000" min="50000" step="10000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Annual Mileage (km)</label>
+              <input type="number" id="rate-mileage" class="form-control" value="12000" min="2000" step="1000" required>
+            </div>
+          </div>
+
+          <div class="form-section-title">3. Territorial Risk & Policy Terms</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Territory Risk Zone</label>
+              <select id="rate-territory" class="form-control">
+                <option value="Urban_HighRisk">Metro / Urban - High Risk</option>
+                <option value="Urban_Standard" selected>Tier 1 City - Standard</option>
+                <option value="Suburban">Tier 2 / Suburban</option>
+                <option value="Rural">Rural</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Voluntary Deductible (₹)</label>
+              <select id="rate-deductible" class="form-control">
+                <option value="1000">₹ 1,000</option>
+                <option value="2500" selected>₹ 2,500</option>
+                <option value="5000">₹ 5,000</option>
+                <option value="10000">₹ 10,000</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Policy Coverage Term</label>
+              <select id="rate-exposure" class="form-control">
+                <option value="1.0" selected>1 Year Annual (1.0 Exposure)</option>
+                <option value="0.5">6 Months (0.5 Exposure)</option>
+                <option value="0.25">3 Months (0.25 Exposure)</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Compute Actuarial Quote
+          </button>
+        </form>
+
+        <div id="rating-results" class="result-container" style="display: none;">
+          <div class="result-box">
+            <span class="result-title">Risk Rating Tier</span>
+            <div style="margin-top: 0.35rem;"><span id="res-tier" class="tier-badge">Tier B</span></div>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Expected Frequency</span>
+            <span class="result-val" id="res-freq">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Expected Severity (₹)</span>
+            <span class="result-val" id="res-sev">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Pure Premium (Tweedie) (₹)</span>
+            <span class="result-val" id="res-pure-prem" style="color: var(--primary);">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Commercial Gross Tariff (₹)</span>
+            <span class="result-val" id="res-gross-prem" style="color: var(--emerald);">--</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Includes 20% expense + 5% target profit</span>
+          </div>
+          <div class="result-box" style="grid-column: span 2; display: flex; flex-direction: column;">
+            <span class="result-title">Tariff Component Breakdown (₹)</span>
+            <div style="height: 160px; position: relative; margin-top: 0.5rem;">
+              <canvas id="chart-quote-breakdown"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Portfolio Rating Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Batch Portfolio Rating & Book Scoring Engine</div>
+          <button class="btn-primary" onclick="runBatchPortfolioScoring()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Score Active Book (2,500 Policies)
+          </button>
+        </div>
+        <p class="panel-desc">
+          Executes automated batch inference across unrated in-force book policies, calculates risk tier segmentations, and writes results in Indian Rupees (₹) to <code>gold_batch_scored_policies</code>.
+        </p>
+
+        <div id="batch-stats-grid" class="kpi-grid" style="display: none; margin-bottom: 1.25rem;">
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-label">Policies Scored</span></div>
+            <div class="kpi-value" id="batch-count">2,500</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-label">Projected Book GWP (₹)</span></div>
+            <div class="kpi-value" id="batch-gwp" style="color:var(--emerald);">--</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-label">Average Pure Premium (₹)</span></div>
+            <div class="kpi-value" id="batch-avg-prem" style="color:var(--primary);">--</div>
+          </div>
+        </div>
+
+        <div id="batch-chart-panel" class="panel" style="display: none; padding: 1.25rem; margin-bottom: 1.25rem;">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Portfolio Risk Tier Segmentation & Commercial GWP (₹)
+            </div>
+            <span class="status-pill">Active Book (2,500 Policies)</span>
+          </div>
+          <div class="chart-wrapper" style="height: 260px;">
+            <canvas id="chart-batch-tiers"></canvas>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table id="batch-tier-table">
+            <thead>
+              <tr><th>Risk Tier</th><th>Policies</th><th>Portfolio Share (%)</th><th>Average Pure Premium (₹)</th><th>Total Incurred Pure Premium (₹)</th><th>Total Commercial GWP (₹)</th></tr>
+            </thead>
+            <tbody id="batch-tier-tbody">
+              <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Click 'Score Active Book' to run batch portfolio rating...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: STRESS TESTING & GEO RISK -->
+    <section id="tab-stress" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Macroeconomic & Catastrophe Stress Testing Engine</div>
+          <span class="status-pill">Excess of Loss (XoL) Reinsurance Treaty</span>
+        </div>
+        <p class="panel-desc">
+          Simulate inflation shocks on claim severity, weather-induced frequency surges, and evaluate capital adequacy and Combined Operating Ratio under Reinsurance retention limits in Indian Rupees (₹).
+        </p>
+
+        <!-- Macro Shock Presets Toolbar -->
+        <div class="preset-toolbar">
+          <span class="preset-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Macro Stress Scenarios:
+          </span>
+          <button type="button" class="preset-chip" onclick="applyStressPreset('baseline')">Baseline (Calm Year)</button>
+          <button type="button" class="preset-chip" onclick="applyStressPreset('monsoon')">Monsoon Flood (+15% Freq)</button>
+          <button type="button" class="preset-chip" onclick="applyStressPreset('cyclone')">Cat-5 Cyclone (+40% Freq, +30% Sev)</button>
+          <button type="button" class="preset-chip" onclick="applyStressPreset('inflation')">Medical & Parts Inflation (+25% Sev)</button>
+        </div>
+
+        <form id="stress-form" onsubmit="event.preventDefault(); runStressSimulation();">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Claim Severity Inflation Shock (%)</label>
+              <input type="number" id="stress-sev" class="form-control" value="12" min="-20" max="50" step="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Catastrophe Frequency Surge (%)</label>
+              <input type="number" id="stress-freq" class="form-control" value="15" min="-20" max="100" step="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reinsurance Retention Limit / Claim (₹)</label>
+              <input type="number" id="stress-ret" class="form-control" value="500000" min="50000" step="50000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Operating Expense Ratio (%)</label>
+              <input type="number" id="stress-exp" class="form-control" value="22" min="10" max="40" step="1" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Execute Stress Simulation
+          </button>
+        </form>
+
+        <div id="stress-results" class="result-container" style="display: none; margin-bottom: 2rem;">
+          <div class="result-box">
+            <span class="result-title">Stressed Gross Incurred Loss (₹)</span>
+            <span class="result-val" id="res-st-gross">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Ceded to Reinsurer (₹)</span>
+            <span class="result-val" id="res-st-ceded" style="color:var(--primary);">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Net Retained Loss (₹)</span>
+            <span class="result-val" id="res-st-net">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Stressed Net Combined Ratio</span>
+            <span class="result-val" id="res-st-cr">--</span>
+          </div>
+          <div class="result-box" style="grid-column: span 2;">
+            <span class="result-title">Underwriting Solvency Status</span>
+            <div id="res-st-health" style="margin-top:0.35rem; font-weight:700; font-size:1.05rem;">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Geo-Risk Accumulation & Probable Maximum Loss (PML)</div>
+          <button class="btn-outline" onclick="loadGeoRiskData()">Refresh Geo Risk</button>
+        </div>
+        <p class="panel-desc">
+          Total Insured Value (TIV in ₹) exposure concentration across territories and catastrophe Probable Maximum Loss (1-in-100 and 1-in-250 year return periods).
+        </p>
+
+        <!-- Visual Geo Risk Charts Grid -->
+        <div class="charts-grid" style="margin-bottom: 1.5rem;">
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div class="chart-panel-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Territorial Exposure (TIV ₹) vs Catastrophe PML
+              </div>
+              <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">1-in-100 & 1-in-250 Yr</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="chart-geo-pml"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-panel">
+            <div class="chart-panel-header">
+              <div class="chart-panel-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22 12 2"/></svg>
+                Reinsurance Treaty Loss Absorption Waterfall
+              </div>
+              <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Net Retained vs Ceded (₹)</span>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="chart-stress-waterfall"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table id="geo-risk-table">
+            <thead>
+              <tr>
+                <th>Territory</th><th>Policies</th><th>Total Insured Value (TIV ₹)</th><th>TIV Concentration (%)</th>
+                <th>Frequency (%)</th><th>Mean Severity (₹)</th><th>1-in-100 Yr PML (₹)</th><th>1-in-250 Yr PML (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="geo-risk-tbody"><tr><td colspan="8" style="text-align:center;">Loading Geo Risk Analytics...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ACTUARIAL RESERVING -->
+    <section id="tab-reserving" class="tab-content">
+      <!-- Visual Reserving Charts Grid -->
+      <div class="charts-grid">
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Cumulative Loss Development Trajectories (AY 2021-2025)
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Dev Age 0 to 4 (₹)</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-loss-dev-curves"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16h10"/><path d="M7 11h10"/><path d="M7 6h4"/></svg>
+              Cumulative Paid Loss vs. Estimated IBNR Reserve
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Ultimate Loss (₹)</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-ibnr-stacked"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Cumulative Paid Loss Development Triangle (₹)</div>
+          <button class="btn-outline" onclick="loadReservingData()">Refresh Triangles</button>
+        </div>
+        <p class="panel-desc">
+          Accident Year (AY) vs Development Year (Dev 0-4) cumulative paid loss evolution in Indian Rupees (₹). Stored in SQLite table <code>gold_loss_triangles</code>.
+        </p>
+        <div class="table-responsive">
+          <table id="triangle-table">
+            <thead>
+              <tr>
+                <th>Accident Year</th><th>Dev 0 (₹)</th><th>Dev 1 (₹)</th><th>Dev 2 (₹)</th><th>Dev 3 (₹)</th><th>Dev 4 (₹)</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="6" style="text-align: center;">Loading Triangle...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Chain Ladder Ultimate Loss & IBNR Reserves Summary (₹)</div>
+          <span class="status-pill">IFRS 17 & Solvency II Compliance</span>
+        </div>
+        <p class="panel-desc">
+          Applies age-to-age Link Ratios (LDF) and Cumulative Development Factors (CDF) to project Ultimate Losses and calculate Incurred But Not Reported (IBNR) reserves in ₹.
+        </p>
+        <div class="table-responsive">
+          <table id="ibnr-table">
+            <thead>
+              <tr>
+                <th>Accident Year</th><th>Latest Dev</th><th>Latest Cumulative Paid (₹)</th><th>CDF Factor</th><th>Projected Ultimate Loss (₹)</th><th>Estimated IBNR Reserve (₹)</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="6" style="text-align: center;">Loading IBNR Reserves...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: PRICE ELASTICITY & RETENTION -->
+    <section id="tab-retention" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Policy Renewal Price Elasticity Simulator</div>
+          <span class="status-pill">Logistic Churn Sensitivity Engine</span>
+        </div>
+        <p class="panel-desc">
+          Test renewal pricing scenarios for individual policies in ₹ to evaluate renewal conversion probability and expected premium realization.
+        </p>
+
+        <form onsubmit="event.preventDefault(); quoteRenewal();" style="margin-bottom: 1.5rem;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Current Annual Premium (₹)</label>
+              <input type="number" id="ren-prem" class="form-control" value="8500" min="1000" step="500" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Proposed Price Change (%)</label>
+              <input type="number" id="ren-change" class="form-control" value="8" min="-30" max="50" step="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Tenure (Years)</label>
+              <input type="number" id="ren-tenure" class="form-control" value="3" min="0" max="20" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">No Claim Bonus (NCB Tier 0-5)</label>
+              <select id="ren-ncb" class="form-control">
+                <option value="0">Tier 0 (0% NCB)</option>
+                <option value="2">Tier 2 (25% NCB)</option>
+                <option value="4" selected>Tier 4 (45% NCB)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Had Claim in Current Year?</label>
+              <select id="ren-claim" class="form-control">
+                <option value="0" selected>No Claims</option>
+                <option value="1">Yes (1+ Claims)</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Evaluate Renewal Elasticity
+          </button>
+        </form>
+
+        <div id="renewal-results" class="result-container" style="display: none; margin-bottom: 2rem;">
+          <div class="result-box">
+            <span class="result-title">Renewal Probability</span>
+            <span class="result-val" id="ren-res-prob">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Proposed Premium (₹)</span>
+            <span class="result-val" id="ren-res-prem">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Expected Realized Value (₹)</span>
+            <span class="result-val" id="ren-res-exp" style="color:var(--primary);">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Customer Retention Classification</span>
+            <div style="margin-top: 0.35rem;"><span id="ren-res-status" class="tier-badge">--</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Portfolio Renewal Elasticity Curve (Scenario Simulation)</div>
+          <button class="btn-outline" onclick="loadRetentionSimulation()">Run Simulation</button>
+        </div>
+        <p class="panel-desc">
+          Simulates the tradeoff between price change %, policyholder retention rate, Gross Written Premium (GWP in ₹), and portfolio Loss Ratio (%).
+        </p>
+        <div class="chart-wrapper" style="height: 300px; margin-bottom: 1.5rem;">
+          <canvas id="chart-elasticity-curve"></canvas>
+        </div>
+        <div class="table-responsive">
+          <table id="elasticity-table">
+            <thead>
+              <tr>
+                <th>Price Change (%)</th><th>Rate Multiplier</th><th>Renewal Conversion (%)</th>
+                <th>Renewed Count</th><th>Projected GWP Revenue (₹)</th><th>Projected Losses (₹)</th><th>Projected Loss Ratio (%)</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="7" style="text-align: center;">Click Run Simulation to load portfolio elasticity curve...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: GOVERNANCE & FAIR LENDING -->
+    <section id="tab-governance" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Actuarial Tariff Relativities (Rate Filing Table)</div>
+          <button class="btn-outline" onclick="loadGovernanceData()">Refresh Relativities</button>
+        </div>
+        <p class="panel-desc">
+          Multiplicative relativities exported for IRDAI / State DOI Regulatory Rate Filing. Standard Base Rate: <strong>₹ 8,500.00</strong> (Suburban, Sedan, Age 36-55, NCB 2).
+        </p>
+        <div class="table-responsive">
+          <table id="relativities-table">
+            <thead>
+              <tr><th>Rating Dimension</th><th>Risk Category</th><th>Relativity Multiplier</th><th>Variance from Base</th><th>Actuarial Status</th></tr>
+            </thead>
+            <tbody id="relativities-tbody"><tr><td colspan="5" style="text-align:center;">Loading Relativities...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Regulatory Disparate Impact & Fair Lending Audit</div>
+          <span class="status-pill" style="background:#ecfdf5; border-color:#a7f3d0; color:var(--emerald);">Four-Fifths Rule (DIR &ge; 0.80)</span>
+        </div>
+        <p class="panel-desc">
+          Audits rating tier distribution across demographic groups to ensure non-discrimination compliance under regulatory principles.
+        </p>
+        <div class="table-responsive">
+          <table id="fairness-table">
+            <thead>
+              <tr><th>Demographic Cohort</th><th>Sample Count</th><th>Favorable Rate (%)</th><th>Reference Baseline (%)</th><th>Disparate Impact Ratio</th><th>Regulatory Status</th></tr>
+            </thead>
+            <tbody id="fairness-tbody"><tr><td colspan="6" style="text-align:center;">Loading Fair Lending Audit...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Feature Importance: Pure Premium Drivers</div>
+        </div>
+        <div id="feature-importance-list" style="display:flex; flex-direction:column; gap:0.75rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div class="charts-grid" style="margin-top: 1.5rem;">
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Disparate Impact Ratio across Demographic Cohorts
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">80% Rule DIR Threshold</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-fairness-bars"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div class="chart-panel-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Actuarial Risk Drivers Feature Importance (%)
+            </div>
+            <span class="status-pill" style="font-size:0.7rem; padding:0.2rem 0.5rem;">Tweedie Model</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-feature-importance"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: CLAIMS & FRAUD TRIAGE -->
+    <section id="tab-triage" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">FNOL Claims Fraud & Triage Engine</div>
+          <span class="status-pill">Classification & Anomaly Scoring</span>
+        </div>
+        <p class="panel-desc">
+          Evaluates incoming First Notice of Loss (FNOL) claims in ₹ for suspicious patterns and routes between Fast-Track digital payout, standard desk review, or SIU (Special Investigation Unit).
+        </p>
+
+        <!-- Claims Case Simulation Toolbar -->
+        <div class="preset-toolbar">
+          <span class="preset-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Simulate Case:
+          </span>
+          <button type="button" class="preset-chip" onclick="applyClaimPreset('commuter')">Clean Commuter Scratch (Fast-Track)</button>
+          <button type="button" class="preset-chip" onclick="applyClaimPreset('theft')">Suspicious Midnight Theft (SIU Referral)</button>
+          <button type="button" class="preset-chip" onclick="applyClaimPreset('highway')">Highway Multi-Vehicle Crash (Desk Review)</button>
+        </div>
+
+        <form id="triage-form" onsubmit="event.preventDefault(); evaluateClaim();">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Claim Type</label>
+              <select id="clm-type" class="form-control">
+                <option value="Collision">Collision</option>
+                <option value="Comprehensive">Comprehensive</option>
+                <option value="Theft">Theft</option>
+                <option value="Third_Party">Third Party Liability</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reported Claim Loss Amount (₹)</label>
+              <input type="number" id="clm-amount" class="form-control" value="35000" min="1000" step="1000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Days to Report (Delay after incident)</label>
+              <input type="number" id="clm-days" class="form-control" value="3" min="0" max="180" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Policy Tenure with Insurer (Years)</label>
+              <input type="number" id="clm-tenure" class="form-control" value="4" min="0" max="20" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Driver Age</label>
+              <input type="number" id="clm-driver-age" class="form-control" value="38" min="18" max="85" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Insured Declared Value - IDV (₹)</label>
+              <input type="number" id="clm-veh-val" class="form-control" value="750000" min="50000" step="25000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vehicle Age (Years)</label>
+              <input type="number" id="clm-veh-age" class="form-control" value="2" min="0" max="20" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Territory</label>
+              <select id="clm-territory" class="form-control">
+                <option value="Urban_HighRisk">Metro / Urban - High Risk</option>
+                <option value="Urban_Standard" selected>Tier 1 City - Standard</option>
+                <option value="Suburban">Tier 2 / Suburban</option>
+                <option value="Rural">Rural</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Triage Claim & Detect Fraud
+          </button>
+        </form>
+
+        <div id="triage-results" class="result-container" style="display: none;">
+          <div class="result-box">
+            <span class="result-title">Fraud Risk Probability</span>
+            <span class="result-val" id="clm-res-score">--</span>
+          </div>
+          <div class="result-box">
+            <span class="result-title">Triage Status</span>
+            <span class="result-val" id="clm-res-status" style="font-size: 1.25rem;">--</span>
+          </div>
+          <div class="result-box" style="grid-column: span 2;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span class="result-title">Fraud Risk Intensity Meter</span>
+              <span id="clm-res-meter-val" style="font-family:var(--font-mono); font-weight:700; font-size:0.85rem;">0 / 100</span>
+            </div>
+            <div style="background:#e2e8f0; height:12px; border-radius:6px; overflow:hidden; position:relative;">
+              <div id="clm-res-meter-bar" style="width: 0%; height:100%; border-radius:6px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); background: linear-gradient(90deg, #059669 0%, #d97706 60%, #e11d48 100%);"></div>
+            </div>
+          </div>
+          <div class="result-box" style="grid-column: span 2;">
+            <span class="result-title">Operational Workflow Action</span>
+            <div id="clm-res-action" style="margin-top: 0.35rem; font-weight: 700; font-size: 1.05rem;">--</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 8: SQLITE LAKEHOUSE EXPLORER -->
+    <section id="tab-lakehouse" class="tab-content">
+
+      <!-- Custom Data Ingestion Studio Panel -->
+      <div id="ingest-panel-container" class="panel" style="border-top: 3px solid var(--primary); margin-bottom: 1.5rem;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Custom Dataset Ingestion Studio (CSV / Excel / JSON)
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <a href="/api/template/policies" download="sample_policies_template.csv" class="btn-outline-xs" style="text-decoration:none; color:#1e293b; background:#ffffff; border-color:#cbd5e1;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Policies Template CSV
+            </a>
+            <a href="/api/template/claims" download="sample_claims_template.csv" class="btn-outline-xs" style="text-decoration:none; color:#1e293b; background:#ffffff; border-color:#cbd5e1;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Claims Template CSV
+            </a>
+          </div>
+        </div>
+        <p class="panel-desc">
+          Upload custom policy book or claims loss run data. Automatically validates columns, imputes missing actuarial fields, updates Bronze in SQLite, and recalculates Silver &amp; Gold actuarial marts.
+        </p>
+
+        <form id="ingest-form" onsubmit="event.preventDefault(); submitCustomUpload();">
+          <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+            <div class="form-group">
+              <label class="form-label">Dataset Target Table</label>
+              <select id="upload-dataset-type" class="form-control">
+                <option value="policies" selected>Policy Portfolio (bronze_policies)</option>
+                <option value="claims">Claims Loss Run (bronze_claims)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ingestion Mode</label>
+              <select id="upload-mode" class="form-control">
+                <option value="append" selected>Append to Existing Book</option>
+                <option value="replace">Replace Portfolio (New Run)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Select File (.csv, .xlsx, .json)</label>
+              <input type="file" id="upload-file-input" class="form-control" accept=".csv,.xlsx,.xls,.json,.txt" required style="padding: 0.5rem;">
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
+            <button type="submit" class="btn-primary" id="btn-submit-upload">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Ingest &amp; Rebuild Lakehouse
+            </button>
+            <span id="upload-status-text" style="font-size:0.85rem; font-family:var(--font-mono); color:var(--text-muted);">Ready to ingest custom data</span>
+          </div>
+        </form>
+
+        <!-- Live Ingestion Feedback Result Card -->
+        <div id="upload-result-card" style="display:none; margin-top:1.25rem; padding:1.25rem; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; color:#065f46; font-weight:700; font-size:0.92rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span id="up-res-title">Dataset Ingested &amp; Lakehouse Refreshed Successfully!</span>
+            </div>
+            <button type="button" class="btn-outline" onclick="refreshAfterUpload()" style="background:#ffffff; color:#065f46; border-color:#a7f3d0; font-size:0.75rem; padding:0.3rem 0.7rem;">
+              Refresh All Dashboard Tabs
+            </button>
+          </div>
+          <div class="result-container" style="background:#ffffff; margin-top:0.5rem; padding:1rem; border-color:#d1fae5;">
+            <div class="result-box">
+              <span class="result-title">Ingested Rows</span>
+              <span class="result-val" id="up-res-rows" style="font-size:1.35rem; color:#059669;">--</span>
+            </div>
+            <div class="result-box">
+              <span class="result-title">Total Active Policies</span>
+              <span class="result-val" id="up-res-pols" style="font-size:1.35rem;">--</span>
+            </div>
+            <div class="result-box">
+              <span class="result-title">Total Earned Exposure</span>
+              <span class="result-val" id="up-res-exp" style="font-size:1.35rem;">--</span>
+            </div>
+            <div class="result-box">
+              <span class="result-title">Portfolio Pure Premium (₹)</span>
+              <span class="result-val" id="up-res-pp" style="font-size:1.35rem; color:var(--primary);">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">SQLite Lakehouse & Query Explorer</div>
+          <span class="status-pill">Database: insurance.db</span>
+        </div>
+        
+        <div class="sql-quick-btns">
+          <button class="btn-chip" onclick="setQuery('SELECT * FROM bronze_policies LIMIT 15;')">Bronze Policies</button>
+          <button class="btn-chip" onclick="setQuery('SELECT * FROM bronze_claims LIMIT 15;')">Bronze Claims</button>
+          <button class="btn-chip" onclick="setQuery('SELECT policy_id, driver_age_band, vehicle_type, exposure, claim_count, total_claim_amount, loss_cost FROM silver_policies LIMIT 15;')">Silver Policies</button>
+          <button class="btn-chip" onclick="setQuery('SELECT * FROM gold_rating_cells LIMIT 15;')">Gold Rating Cells</button>
+          <button class="btn-chip" onclick="setQuery('SELECT * FROM gold_reserves_summary;')">Gold Reserves (IBNR)</button>
+          <button class="btn-chip" onclick="setQuery('SELECT * FROM gold_loss_triangles ORDER BY accident_year, development_year;')">Loss Triangles</button>
+        </div>
+
+        <div class="editor-header">
+          <div class="window-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+            <span class="window-title">insurance.db — SQLite 3.x Analytical Console</span>
+          </div>
+          <button type="button" class="btn-outline-xs" onclick="copyTableCSV()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span id="copy-csv-text">Copy CSV</span>
+          </button>
+        </div>
+        <textarea id="sql-input" class="sql-editor-styled">SELECT * FROM gold_reserves_summary ORDER BY accident_year;</textarea>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <button class="btn-primary" onclick="runCustomQuery()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Execute SQL
+          </button>
+          <span id="query-status" style="font-size: 0.82rem; color: var(--text-muted); font-family: var(--font-mono);"></span>
+        </div>
+
+        <div class="table-responsive">
+          <table id="sql-results-table">
+            <thead id="sql-thead"></thead>
+            <tbody id="sql-tbody">
+              <tr><td style="color: var(--text-muted); padding: 1.5rem; text-align: center;">Execute a query above to view results from SQLite.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 9: DOUBLE LIFT & VALIDATION -->
+    <section id="tab-lift" class="tab-content">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Actuarial Double Lift Chart (10-Decile Test Set)</div>
+          <span class="status-pill">Actual vs. Expected Loss Cost (₹)</span>
+        </div>
+        <p class="panel-desc">
+          Evaluates risk segmentation across 10 deciles of predicted risk in ₹. A strictly ascending slope demonstrates strong discrimination between low-risk and high-risk policies.
+        </p>
+        <div class="chart-wrapper" style="height: 310px; margin-bottom: 1.5rem;">
+          <canvas id="chart-lift-curve"></canvas>
+        </div>
+        <div class="table-responsive">
+          <table id="lift-table">
+            <thead>
+              <tr>
+                <th>Decile</th><th>Total Exposure</th><th>Actual Incurred Loss (₹)</th>
+                <th>Predicted Loss (₹)</th><th>Actual Pure Premium (₹)</th><th>Predicted Pure Premium (₹)</th><th>A/E Ratio</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="7" style="text-align: center;">Loading lift chart metrics...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  
+    <!-- In-Page Executive Valuation Report Modal -->
+    <div id="audit-modal" class="modal-backdrop" onclick="closeAuditModal(event)">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <div class="modal-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            </div>
+            <div>
+              <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main);">Actuarial Valuation & Model Governance Audit Report</h3>
+              <p style="font-size:0.76rem; color:var(--text-muted); font-weight:500;">IRDAI & IFRS 17 Formal Valuation Documentation (INR ₹)</p>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button class="btn-outline" onclick="copyAuditMarkdown()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span id="copy-audit-text">Copy Markdown</span>
+            </button>
+            <button class="btn-outline" onclick="printAuditReport()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Print / PDF
+            </button>
+            <button class="modal-close-btn" onclick="closeAuditModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div id="audit-report-content" class="audit-doc-viewer">Loading Actuarial Valuation Audit Report...</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Indian Currency Formatter Helper
+    function formatINR(val, decimals = 0) {
+      if (val === null || val === undefined || isNaN(val)) return '-';
+      return '₹ ' + Number(val).toLocaleString('en-IN', {
+        maximumFractionDigits: decimals,
+        minimumFractionDigits: decimals
+      });
+    }
+
+    // Chart.js Instance Registry
+    const charts = {};
+
+    function destroyChart(id) {
+      if (charts[id]) {
+        charts[id].destroy();
+        delete charts[id];
+      }
+    }
+
+    function initChart(canvasId, config) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || typeof Chart === 'undefined') return null;
+      destroyChart(canvasId);
+      charts[canvasId] = new Chart(canvas, config);
+      return charts[canvasId];
+    }
+
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      const btn = el || (typeof event !== 'undefined' && event && event.currentTarget) || document.querySelector(`.tab-btn[onclick*="'${tabId}'"]`);
+      if (btn && btn.classList) {
+        btn.classList.add('active');
+      }
+      const section = document.getElementById(`tab-${tabId}`);
+      if (section && section.classList) {
+        section.classList.add('active');
+      }
+
+      // Trigger automatic tab data & chart loading
+      if (tabId === 'lakehouse') {
+        runCustomQuery();
+      } else if (tabId === 'lift') {
+        loadLiftChart();
+      } else if (tabId === 'reserving') {
+        loadReservingData();
+      } else if (tabId === 'retention') {
+        loadRetentionSimulation();
+      } else if (tabId === 'governance') {
+        loadGovernanceData();
+      } else if (tabId === 'stress') {
+        loadGeoRiskData();
+      } else if (tabId === 'overview') {
+        loadGoldMarts();
+      }
+
+      // Smooth resize on visible charts
+      setTimeout(() => {
+        Object.values(charts).forEach(c => {
+          if (c && typeof c.resize === 'function') c.resize();
+        });
+      }, 80);
+    }
+
+    async function loadSummary() {
+      try {
+        const res = await fetch('/api/summary');
+        const data = await res.json();
+        
+        document.getElementById('kpi-policies').innerText = data.portfolio_size?.toLocaleString('en-IN') || '50,000';
+        document.getElementById('kpi-exposure').innerText = data.total_exposure_years?.toLocaleString('en-IN') || '44,084';
+        document.getElementById('kpi-frequency').innerText = (data.empirical_frequency ? (data.empirical_frequency * 100).toFixed(2) + '%' : '8.28%');
+        document.getElementById('kpi-severity').innerText = formatINR(data.empirical_severity || 1635);
+        document.getElementById('kpi-ibnr').innerText = formatINR(data.total_estimated_ibnr || 2599038);
+        
+        if (data.model_metrics && data.model_metrics.gini_tweedie) {
+          document.getElementById('kpi-gini').innerText = data.model_metrics.gini_tweedie.toFixed(4);
+        } else {
+          document.getElementById('kpi-gini').innerText = '0.3848';
+        }
+      } catch (e) {
+        console.error("Error loading summary:", e);
+      }
+    }
+
+    async function loadGoldMarts() {
+      try {
+        const res = await fetch('/api/gold_marts');
+        const rows = await res.json();
+        const tbody = document.querySelector('#gold-marts-table tbody');
+        tbody.innerHTML = '';
+        
+        rows.slice(0, 50).forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${r.territory}</strong></td>
+            <td>${r.driver_age_band}</td>
+            <td>${r.vehicle_type}</td>
+            <td>${r.policy_count.toLocaleString('en-IN')}</td>
+            <td>${r.total_exposure.toLocaleString('en-IN')}</td>
+            <td>${r.total_claims}</td>
+            <td>${(r.empirical_frequency * 100).toFixed(2)}%</td>
+            <td>${formatINR(r.empirical_severity, 2)}</td>
+            <td><strong>${formatINR(r.empirical_pure_premium, 2)}</strong></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // 1. Chart: Vehicle Cost Breakdown
+        const vehMap = {};
+        rows.forEach(r => {
+          if (!vehMap[r.vehicle_type]) {
+            vehMap[r.vehicle_type] = { count: 0, purePremSum: 0, sevSum: 0, exposure: 0 };
+          }
+          vehMap[r.vehicle_type].count += 1;
+          vehMap[r.vehicle_type].purePremSum += r.empirical_pure_premium;
+          vehMap[r.vehicle_type].sevSum += r.empirical_severity;
+          vehMap[r.vehicle_type].exposure += r.total_exposure;
+        });
+
+        const vehTypes = Object.keys(vehMap);
+        const avgPurePrems = vehTypes.map(k => Math.round(vehMap[k].purePremSum / vehMap[k].count));
+        const avgSeverities = vehTypes.map(k => Math.round(vehMap[k].sevSum / vehMap[k].count));
+
+        initChart('chart-vehicle-cost', {
+          type: 'bar',
+          data: {
+            labels: vehTypes,
+            datasets: [
+              {
+                label: 'Pure Premium (₹)',
+                data: avgPurePrems,
+                backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                borderColor: '#4f46e5',
+                borderWidth: 1,
+                borderRadius: 6
+              },
+              {
+                label: 'Mean Severity (₹)',
+                data: avgSeverities,
+                backgroundColor: 'rgba(5, 150, 105, 0.85)',
+                borderColor: '#059669',
+                borderWidth: 1,
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.dataset.label}: ${formatINR(ctx.raw, 0)}`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                ticks: {
+                  callback: v => '₹' + Number(v).toLocaleString('en-IN')
+                },
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+
+        // 2. Chart: Age Band Frequency & Exposure
+        const ageMap = {};
+        rows.forEach(r => {
+          if (!ageMap[r.driver_age_band]) {
+            ageMap[r.driver_age_band] = { exposure: 0, claims: 0 };
+          }
+          ageMap[r.driver_age_band].exposure += r.total_exposure;
+          ageMap[r.driver_age_band].claims += r.total_claims;
+        });
+
+        const ageBands = ['18-25', '26-35', '36-55', '56-70', '70+'].filter(a => ageMap[a]);
+        const exposures = ageBands.map(a => Math.round(ageMap[a].exposure));
+        const freqs = ageBands.map(a => Number(((ageMap[a].claims / ageMap[a].exposure) * 100).toFixed(2)));
+
+        initChart('chart-age-freq', {
+          data: {
+            labels: ageBands,
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Risk Exposure (Years)',
+                data: exposures,
+                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                borderColor: '#2563eb',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: 'Claim Frequency (%)',
+                data: freqs,
+                borderColor: '#d97706',
+                backgroundColor: '#d97706',
+                borderWidth: 2.5,
+                tension: 0.35,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { family: "'Plus Jakarta Sans'", size: 11, weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.type === 'line' ? ` ${ctx.dataset.label}: ${ctx.raw}%` : ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('en-IN')} yrs`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Exposure Years', font: { size: 10 } },
+                grid: { color: '#f1f5f9' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'Claim Frequency %', font: { size: 10 } },
+                grid: { display: false },
+                ticks: { callback: v => v + '%' }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Error loading gold marts:", e);
+      }
+    }
+
+    async function calculateQuote() {
+      const payload = {
+        driver_age: parseInt(document.getElementById('rate-driver-age').value),
+        driving_experience: parseInt(document.getElementById('rate-driving-exp').value),
+        vehicle_type: document.getElementById('rate-vehicle-type').value,
+        vehicle_age: parseInt(document.getElementById('rate-vehicle-age').value),
+        vehicle_value: parseFloat(document.getElementById('rate-vehicle-val').value),
+        annual_mileage: parseInt(document.getElementById('rate-mileage').value),
+        territory: document.getElementById('rate-territory').value,
+        bonus_malus: parseInt(document.getElementById('rate-ncb').value),
+        deductible: parseFloat(document.getElementById('rate-deductible').value),
+        exposure: parseFloat(document.getElementById('rate-exposure').value),
+        policy_tenure: 2
+      };
+
+      try {
+        const res = await fetch('/api/rate_quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        if (data.error || data.detail) {
+          alert("Notice: " + (data.detail || data.error));
+          return;
+        }
+
+        document.getElementById('res-tier').innerText = data.risk_tier;
+        document.getElementById('res-freq').innerText = (data.expected_claim_frequency * 100).toFixed(2) + '%';
+        document.getElementById('res-sev').innerText = formatINR(data.expected_claim_severity, 2);
+        document.getElementById('res-pure-prem').innerText = formatINR(data.pure_premium, 2);
+        document.getElementById('res-gross-prem').innerText = formatINR(data.recommended_gross_premium, 2);
+        
+        document.getElementById('rating-results').style.display = 'grid';
+
+        // Render Tariff Component Breakdown Donut
+        const pureCost = Math.round(data.pure_premium);
+        const expenseLoading = Math.round(data.recommended_gross_premium * 0.20);
+        const profitMargin = Math.round(data.recommended_gross_premium * 0.05);
+
+        initChart('chart-quote-breakdown', {
+          type: 'doughnut',
+          data: {
+            labels: ['Technical Loss Cost (₹)', 'Expense Loading (20%) (₹)', 'Target Profit Margin (5%) (₹)'],
+            datasets: [{
+              data: [pureCost, expenseLoading, profitMargin],
+              backgroundColor: ['#4f46e5', '#0284c7', '#059669'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${formatINR(ctx.raw, 2)}`
+                }
+              }
+            },
+            cutout: '65%'
+          }
+        });
+
+      } catch (e) {
+        alert("Error rating quote: " + e.message);
+      }
+    }
+
+    async function runBatchPortfolioScoring() {
+      const tbody = document.getElementById('batch-tier-tbody');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--primary);">Running batch inference on 2,500 book policies...</td></tr>';
+
+      try {
+        const res = await fetch('/api/analytics/batch_score?sample_size=2500');
+        const data = await res.json();
+
+        document.getElementById('batch-count').innerText = data.batch_size.toLocaleString('en-IN');
+        document.getElementById('batch-gwp').innerText = formatINR(data.total_portfolio_gwp);
+        document.getElementById('batch-avg-prem').innerText = formatINR(data.avg_policy_pure_premium, 2);
+        document.getElementById('batch-stats-grid').style.display = 'grid';
+
+        tbody.innerHTML = '';
+        data.tier_distribution.forEach(t => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${t.risk_tier}</strong></td>
+            <td>${t.policy_count.toLocaleString('en-IN')}</td>
+            <td><strong>${t.portfolio_share_pct.toFixed(1)}%</strong></td>
+            <td>${formatINR(t.avg_pure_premium, 2)}</td>
+            <td>${formatINR(t.total_pure_premium)}</td>
+            <td><strong style="color:var(--emerald);">${formatINR(t.total_gross_premium)}</strong></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Show and render batch tiers chart
+        document.getElementById('batch-chart-panel').style.display = 'block';
+        const tiers = data.tier_distribution.map(t => t.risk_tier);
+        const policyCounts = data.tier_distribution.map(t => t.policy_count);
+        const grossPremiums = data.tier_distribution.map(t => Math.round(t.total_gross_premium));
+
+        initChart('chart-batch-tiers', {
+          data: {
+            labels: tiers,
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Policies Count',
+                data: policyCounts,
+                backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                borderRadius: 6,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: 'Commercial GWP Revenue (₹)',
+                data: grossPremiums,
+                borderColor: '#059669',
+                backgroundColor: '#059669',
+                borderWidth: 2.5,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.3,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.type === 'line' ? ` ${ctx.dataset.label}: ${formatINR(ctx.raw)}` : ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('en-IN')}`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Policy Volume', font: { size: 10 } },
+                grid: { color: '#f1f5f9' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'Total GWP (₹)', font: { size: 10 } },
+                grid: { display: false },
+                ticks: { callback: v => '₹' + Number(v).toLocaleString('en-IN') }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        alert("Error in batch scoring: " + e.message);
+      }
+    }
+
+    async function runStressSimulation() {
+      const payload = {
+        severity_inflation_pct: parseFloat(document.getElementById('stress-sev').value),
+        frequency_surge_pct: parseFloat(document.getElementById('stress-freq').value),
+        reinsurance_retention_limit: parseFloat(document.getElementById('stress-ret').value),
+        expense_ratio_pct: parseFloat(document.getElementById('stress-exp').value)
+      };
+
+      try {
+        const res = await fetch('/api/analytics/stress_test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const outcome = data.stressed_outcome;
+
+        document.getElementById('res-st-gross').innerText = formatINR(outcome.total_stressed_gross_loss);
+        document.getElementById('res-st-ceded').innerText = formatINR(outcome.total_ceded_to_reinsurer);
+        document.getElementById('res-st-net').innerText = formatINR(outcome.total_retained_net_loss);
+        document.getElementById('res-st-cr').innerText = outcome.net_combined_ratio_pct.toFixed(1) + '%';
+        
+        const healthEl = document.getElementById('res-st-health');
+        healthEl.innerText = `${outcome.financial_health} (Net Underwriting Margin: ${formatINR(outcome.net_underwriting_margin)})`;
+        if (outcome.health_color === 'green') {
+          healthEl.style.color = '#059669';
+        } else if (outcome.health_color === 'amber') {
+          healthEl.style.color = '#d97706';
+        } else {
+          healthEl.style.color = '#e11d48';
+        }
+
+        document.getElementById('stress-results').style.display = 'grid';
+
+        // Render Stress Reinsurance Absorption Donut
+        initChart('chart-stress-waterfall', {
+          type: 'doughnut',
+          data: {
+            labels: ['Net Retained Loss (₹)', 'Ceded to Reinsurer (₹)'],
+            datasets: [{
+              data: [Math.round(outcome.total_retained_net_loss), Math.round(outcome.total_ceded_to_reinsurer)],
+              backgroundColor: ['#e11d48', '#2563eb'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { font: { weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${formatINR(ctx.raw)}`
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+
+      } catch (e) {
+        alert("Error running stress test: " + e.message);
+      }
+    }
+
+    async function loadGeoRiskData() {
+      try {
+        const res = await fetch('/api/analytics/geo_risk');
+        const rows = await res.json();
+        const tbody = document.getElementById('geo-risk-tbody');
+        tbody.innerHTML = '';
+
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${r.territory}</strong></td>
+            <td>${r.policy_count.toLocaleString('en-IN')}</td>
+            <td><strong>${formatINR(r.total_insured_value)}</strong></td>
+            <td>${r.tiv_concentration_pct.toFixed(1)}%</td>
+            <td>${r.empirical_frequency_pct.toFixed(2)}%</td>
+            <td>${formatINR(r.mean_severity, 2)}</td>
+            <td style="color:#d97706; font-weight:700;">${formatINR(r.pml_100_year)}</td>
+            <td style="color:#e11d48; font-weight:700;">${formatINR(r.pml_250_year)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Chart: Territorial TIV vs 100 & 250 Yr PML
+        const territories = rows.map(r => r.territory.replace('_', ' '));
+        const tivs = rows.map(r => Math.round(r.total_insured_value / 100000)); // In Lakhs
+        const pml100 = rows.map(r => Math.round(r.pml_100_year / 100000));
+        const pml250 = rows.map(r => Math.round(r.pml_250_year / 100000));
+
+        initChart('chart-geo-pml', {
+          type: 'bar',
+          data: {
+            labels: territories,
+            datasets: [
+              {
+                label: 'TIV (₹ Lakhs)',
+                data: tivs,
+                backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                borderRadius: 5
+              },
+              {
+                label: '1-in-100 Yr PML (₹ Lakhs)',
+                data: pml100,
+                backgroundColor: 'rgba(217, 119, 6, 0.85)',
+                borderRadius: 5
+              },
+              {
+                label: '1-in-250 Yr PML (₹ Lakhs)',
+                data: pml250,
+                backgroundColor: 'rgba(225, 29, 72, 0.85)',
+                borderRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { size: 10, weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.dataset.label}: ₹ ${(ctx.raw).toLocaleString('en-IN')} Lakhs`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                ticks: { callback: v => '₹' + v + 'L' },
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+
+        // Initialize default stress waterfall
+        initChart('chart-stress-waterfall', {
+          type: 'doughnut',
+          data: {
+            labels: ['Baseline Retained Loss (₹)', 'Treaty Reinsurance Buffer (₹)'],
+            datasets: [{
+              data: [5967341, 1500000],
+              backgroundColor: ['#2563eb', '#059669'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { font: { weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${formatINR(ctx.raw)}`
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+
+      } catch (e) {
+        console.error("Error loading geo risk data:", e);
+      }
+    }
+
+    async function loadReservingData() {
+      try {
+        const resTri = await fetch('/api/reserving/triangles');
+        const rowsTri = await resTri.json();
+        const tbodyTri = document.querySelector('#triangle-table tbody');
+        tbodyTri.innerHTML = '';
+        
+        rowsTri.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>AY ${r.accident_year}</strong></td>
+            <td>${r.dev_0 ? formatINR(r.dev_0) : '-'}</td>
+            <td>${r.dev_1 ? formatINR(r.dev_1) : '-'}</td>
+            <td>${r.dev_2 ? formatINR(r.dev_2) : '-'}</td>
+            <td>${r.dev_3 ? formatINR(r.dev_3) : '-'}</td>
+            <td>${r.dev_4 ? formatINR(r.dev_4) : '-'}</td>
+          `;
+          tbodyTri.appendChild(tr);
+        });
+
+        const resIbnr = await fetch('/api/reserving/ibnr');
+        const rowsIbnr = await resIbnr.json();
+        const tbodyIbnr = document.querySelector('#ibnr-table tbody');
+        tbodyIbnr.innerHTML = '';
+
+        rowsIbnr.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>AY ${r.accident_year}</strong></td>
+            <td>Dev ${r.latest_development_year}</td>
+            <td>${formatINR(r.latest_cumulative_paid)}</td>
+            <td>${r.cdf_to_ultimate.toFixed(4)}</td>
+            <td><strong>${formatINR(r.projected_ultimate_loss)}</strong></td>
+            <td style="color: ${r.estimated_ibnr_reserve > 0 ? '#d97706' : '#059669'}; font-weight:700;">
+              ${formatINR(r.estimated_ibnr_reserve)}
+            </td>
+          `;
+          tbodyIbnr.appendChild(tr);
+        });
+
+        // 1. Chart: Cumulative Loss Development Trajectories
+        const ayColors = ['#2563eb', '#059669', '#d97706', '#7c3aed', '#e11d48'];
+        const devLabels = ['Dev 0', 'Dev 1', 'Dev 2', 'Dev 3', 'Dev 4'];
+        const trajectoryDatasets = rowsTri.map((r, i) => {
+          const points = [r.dev_0, r.dev_1, r.dev_2, r.dev_3, r.dev_4].map(v => v ? Math.round(v) : null);
+          return {
+            label: `AY ${r.accident_year}`,
+            data: points,
+            borderColor: ayColors[i % ayColors.length],
+            backgroundColor: ayColors[i % ayColors.length],
+            tension: 0.25,
+            spanGaps: false,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          };
+        });
+
+        initChart('chart-loss-dev-curves', {
+          type: 'line',
+          data: {
+            labels: devLabels,
+            datasets: trajectoryDatasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { size: 10, weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.dataset.label} (${ctx.label}): ${formatINR(ctx.raw)}`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                ticks: { callback: v => '₹' + (v / 100000).toFixed(1) + 'L' },
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+
+        // 2. Chart: Cumulative Paid vs Estimated IBNR Stacked Bar
+        const ays = rowsIbnr.map(r => `AY ${r.accident_year}`);
+        const paids = rowsIbnr.map(r => Math.round(r.latest_cumulative_paid));
+        const ibnrs = rowsIbnr.map(r => Math.round(r.estimated_ibnr_reserve));
+
+        initChart('chart-ibnr-stacked', {
+          type: 'bar',
+          data: {
+            labels: ays,
+            datasets: [
+              {
+                label: 'Latest Cumulative Paid (₹)',
+                data: paids,
+                backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                borderRadius: 5
+              },
+              {
+                label: 'Estimated IBNR Reserve (₹)',
+                data: ibnrs,
+                backgroundColor: 'rgba(217, 119, 6, 0.85)',
+                borderRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { stacked: true, grid: { display: false } },
+              y: {
+                stacked: true,
+                ticks: { callback: v => '₹' + (v / 100000).toFixed(1) + 'L' },
+                grid: { color: '#f1f5f9' }
+              }
+            },
+            plugins: {
+              legend: { position: 'top', labels: { font: { size: 10, weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.dataset.label}: ${formatINR(ctx.raw)}`
+                }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Error loading reserving data:", e);
+      }
+    }
+
+    async function quoteRenewal() {
+      const payload = {
+        current_premium: parseFloat(document.getElementById('ren-prem').value),
+        proposed_price_change_pct: parseFloat(document.getElementById('ren-change').value),
+        policy_tenure: parseInt(document.getElementById('ren-tenure').value),
+        bonus_malus: parseInt(document.getElementById('ren-ncb').value),
+        had_claim: parseInt(document.getElementById('ren-claim').value)
+      };
+
+      try {
+        const res = await fetch('/api/retention/quote_renewal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        document.getElementById('ren-res-prob').innerText = (data.renewal_probability * 100).toFixed(1) + '%';
+        document.getElementById('ren-res-prem').innerText = formatINR(data.proposed_premium, 2);
+        document.getElementById('ren-res-exp').innerText = formatINR(data.expected_realized_premium, 2);
+        document.getElementById('ren-res-status').innerText = data.price_sensitivity_status;
+
+        document.getElementById('renewal-results').style.display = 'grid';
+      } catch (e) {
+        alert("Error quoting renewal: " + e.message);
+      }
+    }
+
+    async function loadRetentionSimulation() {
+      try {
+        const res = await fetch('/api/retention/simulate');
+        const rows = await res.json();
+        const tbody = document.querySelector('#elasticity-table tbody');
+        tbody.innerHTML = '';
+
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${r.price_change_pct > 0 ? '+' : ''}${r.price_change_pct}%</strong></td>
+            <td>${r.offered_rate_multiplier}x</td>
+            <td style="color:${r.conversion_rate_pct > 80 ? '#059669' : '#d97706'}; font-weight:700;">${r.conversion_rate_pct.toFixed(1)}%</td>
+            <td>${r.expected_renewed_count.toLocaleString('en-IN')}</td>
+            <td><strong>${formatINR(r.projected_gwp_revenue)}</strong></td>
+            <td>${formatINR(r.projected_incurred_loss)}</td>
+            <td style="color:${r.projected_loss_ratio_pct < 65 ? '#059669' : '#e11d48'}; font-weight:700;">${r.projected_loss_ratio_pct.toFixed(1)}%</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Chart: Price Elasticity Demand & GWP Revenue Optimization Curve
+        const priceLabels = rows.map(r => `${r.price_change_pct > 0 ? '+' : ''}${r.price_change_pct}%`);
+        const conversionRates = rows.map(r => r.conversion_rate_pct);
+        const gwpRevenues = rows.map(r => Math.round(r.projected_gwp_revenue));
+
+        initChart('chart-elasticity-curve', {
+          data: {
+            labels: priceLabels,
+            datasets: [
+              {
+                type: 'line',
+                label: 'Renewal Retention Rate (%)',
+                data: conversionRates,
+                borderColor: '#d97706',
+                backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                borderWidth: 2.5,
+                pointRadius: 5,
+                tension: 0.35,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: 'Projected GWP Revenue (₹)',
+                data: gwpRevenues,
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.15)',
+                borderWidth: 2.5,
+                fill: true,
+                pointRadius: 5,
+                tension: 0.35,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.label.includes('%') ? ` ${ctx.dataset.label}: ${ctx.raw.toFixed(1)}%` : ` ${ctx.dataset.label}: ${formatINR(ctx.raw)}`
+                }
+              }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Proposed Renewal Price Change (%)' }, grid: { display: false } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Conversion Rate %' },
+                ticks: { callback: v => v + '%' },
+                grid: { color: '#f1f5f9' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'Projected GWP (₹)' },
+                ticks: { callback: v => '₹' + (v / 100000).toFixed(1) + 'L' },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Error running retention simulation:", e);
+      }
+    }
+
+    async function loadGovernanceData() {
+      try {
+        const resRel = await fetch('/api/explainability/relativities');
+        const relData = await resRel.json();
+        const tbodyRel = document.getElementById('relativities-tbody');
+        tbodyRel.innerHTML = '';
+
+        for (const [dim, items] of Object.entries(relData.factors)) {
+          items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>${dim.replace('_', ' ').toUpperCase()}</strong></td>
+              <td>${item.category}</td>
+              <td><span style="font-family:var(--font-mono); font-weight:700;">${item.relativity.toFixed(2)}x</span></td>
+              <td style="color:${item.delta_pct > 0 ? '#e11d48' : (item.delta_pct < 0 ? '#059669' : '#64748b')}; font-weight:600;">
+                ${item.delta_pct > 0 ? '+' : ''}${item.delta_pct.toFixed(1)}%
+              </td>
+              <td><span class="status-pill" style="font-size:0.72rem; padding:0.2rem 0.5rem;">${item.status}</span></td>
+            `;
+            tbodyRel.appendChild(tr);
+          });
+        }
+
+        const resFair = await fetch('/api/explainability/fairness_audit');
+        const fairData = await resFair.json();
+        const tbodyFair = document.getElementById('fairness-tbody');
+        tbodyFair.innerHTML = '';
+
+        fairData.cohorts.forEach(c => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${c.demographic_cohort}</strong></td>
+            <td>${c.sample_size.toLocaleString('en-IN')}</td>
+            <td>${c.favorable_rate_pct}%</td>
+            <td>${c.reference_rate_pct}%</td>
+            <td><strong style="color:var(--primary);">${c.disparate_impact_ratio.toFixed(3)}</strong></td>
+            <td><span class="status-pill" style="background:${c.disparate_impact_ratio >= 0.8 ? '#ecfdf5' : '#fff1f2'}; color:${c.disparate_impact_ratio >= 0.8 ? '#059669' : '#e11d48'}; border-color:${c.disparate_impact_ratio >= 0.8 ? '#a7f3d0' : '#fecdd3'};">${c.status}</span></td>
+          `;
+          tbodyFair.appendChild(tr);
+        });
+
+        // Chart: Disparate Impact Ratio across demographic cohorts
+        const cohorts = fairData.cohorts.map(c => c.demographic_cohort);
+        const dirRatios = fairData.cohorts.map(c => c.disparate_impact_ratio);
+        const dirColors = fairData.cohorts.map(c => c.disparate_impact_ratio >= 0.8 ? '#059669' : '#e11d48');
+
+        initChart('chart-fairness-bars', {
+          type: 'bar',
+          data: {
+            labels: cohorts,
+            datasets: [{
+              label: 'Disparate Impact Ratio (DIR)',
+              data: dirRatios,
+              backgroundColor: dirColors,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` DIR: ${ctx.raw.toFixed(3)} (${ctx.raw >= 0.8 ? 'Compliant' : 'Disparity Alert'})`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                min: 0,
+                max: 1.2,
+                ticks: { stepSize: 0.2 },
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+
+        const resFeat = await fetch('/api/explainability/feature_importance');
+        const featData = await resFeat.json();
+        const featDiv = document.getElementById('feature-importance-list');
+        featDiv.innerHTML = '';
+
+        featData.forEach(f => {
+          const itemDiv = document.createElement('div');
+          itemDiv.innerHTML = `
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600;">
+              <span>${f.feature} <small style="color:var(--text-muted); font-weight:400;">(${f.domain})</small></span>
+              <span style="color:var(--primary); font-family:var(--font-mono);">${f.importance_pct}%</span>
+            </div>
+            <div style="background:#e2e8f0; height:6px; border-radius:3px; margin-top:4px;">
+              <div class="importance-bar" style="width: ${f.importance_pct * 3.3}%;"></div>
+            </div>
+          `;
+          featDiv.appendChild(itemDiv);
+        });
+
+        // Chart: Horizontal Feature Importance Bar Chart
+        const featNames = featData.map(f => f.feature);
+        const featPct = featData.map(f => f.importance_pct);
+
+        initChart('chart-feature-importance', {
+          type: 'bar',
+          data: {
+            labels: featNames,
+            datasets: [{
+              label: 'Importance %',
+              data: featPct,
+              backgroundColor: 'rgba(79, 70, 229, 0.85)',
+              borderRadius: 5
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: ctx => ` Importance: ${ctx.raw}%` } }
+            },
+            scales: {
+              x: { ticks: { callback: v => v + '%' }, grid: { color: '#f1f5f9' } },
+              y: { grid: { display: false } }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Error loading governance data:", e);
+      }
+    }
+
+    function viewAuditReport() {
+      openAuditModal();
+    }
+
+    async function evaluateClaim() {
+      const payload = {
+        claim_type: document.getElementById('clm-type').value,
+        paid_amount: parseFloat(document.getElementById('clm-amount').value),
+        days_to_report: parseInt(document.getElementById('clm-days').value),
+        policy_tenure: parseInt(document.getElementById('clm-tenure').value),
+        driver_age: parseInt(document.getElementById('clm-driver-age').value),
+        vehicle_value: parseFloat(document.getElementById('clm-veh-val').value),
+        vehicle_age: parseInt(document.getElementById('clm-veh-age').value),
+        territory: document.getElementById('clm-territory').value,
+        bonus_malus: 1,
+        deductible: 2500.0
+      };
+
+      try {
+        const res = await fetch('/api/triage_claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        document.getElementById('clm-res-score').innerText = data.fraud_risk_score_100 + ' / 100';
+        document.getElementById('clm-res-status').innerText = data.status;
+        
+        const meterVal = document.getElementById('clm-res-meter-val');
+        const meterBar = document.getElementById('clm-res-meter-bar');
+        if (meterVal && meterBar) {
+          meterVal.innerText = data.fraud_risk_score_100 + ' / 100';
+          meterBar.style.width = Math.min(100, Math.max(4, data.fraud_risk_score_100)) + '%';
+        }
+
+        const actionEl = document.getElementById('clm-res-action');
+        actionEl.innerText = data.recommendation;
+        if (data.badge_color === 'red') {
+          actionEl.style.color = '#e11d48';
+        } else if (data.badge_color === 'green') {
+          actionEl.style.color = '#059669';
+        } else {
+          actionEl.style.color = '#2563eb';
+        }
+
+        document.getElementById('triage-results').style.display = 'grid';
+      } catch (e) {
+        alert("Error triaging claim: " + e.message);
+      }
+    }
+
+    function setQuery(q) {
+      document.getElementById('sql-input').value = q;
+      runCustomQuery();
+    }
+
+    async function runCustomQuery() {
+      const query = document.getElementById('sql-input').value;
+      const statusEl = document.getElementById('query-status');
+      statusEl.innerText = "Executing SQLite query...";
+
+      try {
+        const res = await fetch('/api/sql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+        const data = await res.json();
+        
+        if (data.detail) {
+          statusEl.innerText = "Query error: " + data.detail;
+          return;
+        }
+
+        statusEl.innerText = `Returned ${data.row_count} rows from SQLite`;
+
+        const thead = document.getElementById('sql-thead');
+        const tbody = document.getElementById('sql-tbody');
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (data.columns && data.columns.length > 0) {
+          const headerRow = document.createElement('tr');
+          data.columns.forEach(col => {
+            const th = document.createElement('th');
+            th.innerText = col;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+
+          const moneyCols = new Set([
+            'vehicle_value', 'deductible', 'claim_amount', 'paid_amount', 'total_claim_amount', 
+            'loss_cost', 'pure_premium', 'empirical_severity', 'empirical_pure_premium', 
+            'estimated_ibnr_reserve', 'projected_ultimate_loss', 'latest_cumulative_paid', 
+            'dev_0', 'dev_1', 'dev_2', 'dev_3', 'dev_4', 'total_pure_premium', 
+            'total_gross_premium', 'total_insured_value', 'pml_100_year', 'pml_250_year', 
+            'projected_gwp_revenue', 'projected_incurred_loss', 'avg_pure_premium', 'mean_severity',
+            'stressed_gross_incurred_loss', 'ceded_to_reinsurer', 'net_retained_loss'
+          ]);
+
+          data.rows.forEach(r => {
+            const tr = document.createElement('tr');
+            data.columns.forEach(col => {
+              const td = document.createElement('td');
+              const val = r[col];
+              if (val === null || val === undefined) {
+                td.innerText = 'NULL';
+              } else if (moneyCols.has(col.toLowerCase()) && typeof val === 'number') {
+                td.innerText = formatINR(val, Number.isInteger(val) ? 0 : 2);
+                td.style.fontWeight = '600';
+              } else {
+                td.innerText = (typeof val === 'number' && !Number.isInteger(val)) ? val.toFixed(4) : val;
+              }
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {
+        statusEl.innerText = "Error: " + e.message;
+      }
+    }
+
+    async function loadLiftChart() {
+      try {
+        const res = await fetch('/api/double_lift');
+        const rows = await res.json();
+        const tbody = document.querySelector('#lift-table tbody');
+        tbody.innerHTML = '';
+
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>Decile ${r.decile}</strong></td>
+            <td>${r.total_exposure.toLocaleString('en-IN')}</td>
+            <td>${formatINR(r.total_actual_loss)}</td>
+            <td>${formatINR(r.total_pred_loss)}</td>
+            <td><strong>${formatINR(r.actual_pure_premium, 2)}</strong></td>
+            <td>${formatINR(r.pred_pure_premium, 2)}</td>
+            <td style="color: ${r.ae_ratio > 1.15 ? '#d97706' : '#059669'}; font-weight:700;">${r.ae_ratio.toFixed(3)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Chart: 10-Decile Double Lift Calibration Curve
+        const deciles = rows.map(r => `Decile ${r.decile}`);
+        const actualPurePrems = rows.map(r => r.actual_pure_premium);
+        const predPurePrems = rows.map(r => r.pred_pure_premium);
+        const exposures = rows.map(r => Math.round(r.total_exposure));
+
+        initChart('chart-lift-curve', {
+          data: {
+            labels: deciles,
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Exposure Volume',
+                data: exposures,
+                backgroundColor: 'rgba(203, 213, 225, 0.45)',
+                borderRadius: 4,
+                yAxisID: 'y1'
+              },
+              {
+                type: 'line',
+                label: 'Actual Empirical Pure Premium (₹)',
+                data: actualPurePrems,
+                borderColor: '#2563eb',
+                backgroundColor: '#2563eb',
+                borderWidth: 2.5,
+                pointRadius: 5,
+                tension: 0.25,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: 'Tweedie Predicted Pure Premium (₹)',
+                data: predPurePrems,
+                borderColor: '#059669',
+                backgroundColor: '#059669',
+                borderWidth: 2.5,
+                pointRadius: 5,
+                borderDash: [5, 5],
+                tension: 0.25,
+                yAxisID: 'y'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { font: { weight: '600' } } },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.type === 'line' ? ` ${ctx.dataset.label}: ${formatINR(ctx.raw, 2)}` : ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('en-IN')}`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                title: { display: true, text: 'Pure Premium (₹)', font: { size: 10 } },
+                ticks: { callback: v => '₹' + v },
+                grid: { color: '#f1f5f9' }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                title: { display: true, text: 'Earned Exposure', font: { size: 10 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error("Error loading lift chart:", e);
+      }
+    }
+
+    
+    // --- Interactive Preset Handlers ---
+    function applyQuotePreset(type) {
+      if (type === 'young_metro') {
+        document.getElementById('rate-driver-age').value = 21;
+        document.getElementById('rate-driving-exp').value = 2;
+        document.getElementById('rate-ncb').value = 0;
+        document.getElementById('rate-vehicle-type').value = 'Sports';
+        document.getElementById('rate-vehicle-age').value = 1;
+        document.getElementById('rate-vehicle-val').value = 1200000;
+        document.getElementById('rate-mileage').value = 18000;
+        document.getElementById('rate-territory').value = 'Urban_HighRisk';
+        document.getElementById('rate-deductible').value = 1000;
+        document.getElementById('rate-exposure').value = 1.0;
+      } else if (type === 'family_sedan') {
+        document.getElementById('rate-driver-age').value = 42;
+        document.getElementById('rate-driving-exp').value = 18;
+        document.getElementById('rate-ncb').value = 4;
+        document.getElementById('rate-vehicle-type').value = 'Sedan';
+        document.getElementById('rate-vehicle-age').value = 4;
+        document.getElementById('rate-vehicle-val').value = 750000;
+        document.getElementById('rate-mileage').value = 10000;
+        document.getElementById('rate-territory').value = 'Suburban';
+        document.getElementById('rate-deductible').value = 2500;
+        document.getElementById('rate-exposure').value = 1.0;
+      } else if (type === 'luxury_suv') {
+        document.getElementById('rate-driver-age').value = 48;
+        document.getElementById('rate-driving-exp').value = 22;
+        document.getElementById('rate-ncb').value = 3;
+        document.getElementById('rate-vehicle-type').value = 'Luxury';
+        document.getElementById('rate-vehicle-age').value = 2;
+        document.getElementById('rate-vehicle-val').value = 3500000;
+        document.getElementById('rate-mileage').value = 15000;
+        document.getElementById('rate-territory').value = 'Urban_Standard';
+        document.getElementById('rate-deductible').value = 5000;
+        document.getElementById('rate-exposure').value = 1.0;
+      } else if (type === 'rural_hatch') {
+        document.getElementById('rate-driver-age').value = 52;
+        document.getElementById('rate-driving-exp').value = 28;
+        document.getElementById('rate-ncb').value = 5;
+        document.getElementById('rate-vehicle-type').value = 'Hatchback';
+        document.getElementById('rate-vehicle-age').value = 6;
+        document.getElementById('rate-vehicle-val').value = 320000;
+        document.getElementById('rate-mileage').value = 7000;
+        document.getElementById('rate-territory').value = 'Rural';
+        document.getElementById('rate-deductible').value = 2500;
+        document.getElementById('rate-exposure').value = 1.0;
+      }
+      calculateQuote();
+    }
+
+    function applyStressPreset(type) {
+      if (type === 'baseline') {
+        document.getElementById('stress-sev').value = 0;
+        document.getElementById('stress-freq').value = 0;
+        document.getElementById('stress-ret').value = 500000;
+        document.getElementById('stress-exp').value = 20;
+      } else if (type === 'monsoon') {
+        document.getElementById('stress-sev').value = 10;
+        document.getElementById('stress-freq').value = 25;
+        document.getElementById('stress-ret').value = 400000;
+        document.getElementById('stress-exp').value = 22;
+      } else if (type === 'cyclone') {
+        document.getElementById('stress-sev').value = 30;
+        document.getElementById('stress-freq').value = 40;
+        document.getElementById('stress-ret').value = 350000;
+        document.getElementById('stress-exp').value = 24;
+      } else if (type === 'inflation') {
+        document.getElementById('stress-sev').value = 25;
+        document.getElementById('stress-freq').value = 5;
+        document.getElementById('stress-ret').value = 500000;
+        document.getElementById('stress-exp').value = 25;
+      }
+      runStressSimulation();
+    }
+
+    function applyClaimPreset(type) {
+      if (type === 'commuter') {
+        document.getElementById('clm-type').value = 'Collision';
+        document.getElementById('clm-amount').value = 8500;
+        document.getElementById('clm-days').value = 1;
+        document.getElementById('clm-tenure').value = 6;
+        document.getElementById('clm-driver-age').value = 45;
+        document.getElementById('clm-veh-val').value = 650000;
+        document.getElementById('clm-veh-age').value = 4;
+        document.getElementById('clm-territory').value = 'Suburban';
+      } else if (type === 'theft') {
+        document.getElementById('clm-type').value = 'Theft';
+        document.getElementById('clm-amount').value = 850000;
+        document.getElementById('clm-days').value = 28;
+        document.getElementById('clm-tenure').value = 0;
+        document.getElementById('clm-driver-age').value = 22;
+        document.getElementById('clm-veh-val').value = 900000;
+        document.getElementById('clm-veh-age').value = 1;
+        document.getElementById('clm-territory').value = 'Urban_HighRisk';
+      } else if (type === 'highway') {
+        document.getElementById('clm-type').value = 'Collision';
+        document.getElementById('clm-amount').value = 145000;
+        document.getElementById('clm-days').value = 5;
+        document.getElementById('clm-tenure').value = 3;
+        document.getElementById('clm-driver-age').value = 36;
+        document.getElementById('clm-veh-val').value = 800000;
+        document.getElementById('clm-veh-age').value = 3;
+        document.getElementById('clm-territory').value = 'Urban_Standard';
+      }
+      evaluateClaim();
+    }
+
+    // --- Modal Management for Valuation Audit Report ---
+    let cachedAuditReport = '';
+
+    async function openAuditModal() {
+      const modal = document.getElementById('audit-modal');
+      const contentEl = document.getElementById('audit-report-content');
+      modal.style.display = 'flex';
+      
+      try {
+        if (!cachedAuditReport) {
+          contentEl.innerText = "Fetching IRDAI Actuarial Valuation Audit Report from backend...";
+          const res = await fetch('/api/report/markdown');
+          cachedAuditReport = await res.text();
+        }
+        contentEl.innerText = cachedAuditReport;
+      } catch (e) {
+        contentEl.innerText = "Error loading report: " + e.message;
+      }
+    }
+
+    function closeAuditModal(e) {
+      if (e && e.target !== e.currentTarget && !e.target.closest('.modal-close-btn')) return;
+      document.getElementById('audit-modal').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('audit-modal').style.display = 'none';
+      }
+    });
+
+    function copyAuditMarkdown() {
+      if (!cachedAuditReport) return;
+      navigator.clipboard.writeText(cachedAuditReport).then(() => {
+        const txt = document.getElementById('copy-audit-text');
+        txt.innerText = 'Copied to Clipboard!';
+        setTimeout(() => { txt.innerText = 'Copy Markdown'; }, 2000);
+      });
+    }
+
+    function printAuditReport() {
+      const win = window.open('', '_blank');
+      win.document.write(`
+        <html>
+        <head>
+          <title>Actuarial Valuation Report (INR)</title>
+          <style>
+            body { font-family: -apple-system, sans-serif; padding: 2rem; color: #0f172a; line-height: 1.6; }
+            pre { font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; }
+          </style>
+        </head>
+        <body>
+          <pre>${cachedAuditReport || 'Loading...'}</pre>
+        </body>
+        </html>
+      `);
+      win.document.close();
+      win.focus();
+      setTimeout(() => { win.print(); }, 250);
+    }
+
+    function copyTableCSV() {
+      const thead = document.getElementById('sql-thead');
+      const tbody = document.getElementById('sql-tbody');
+      if (!thead || !tbody) return;
+
+      const rows = [];
+      const ths = Array.from(thead.querySelectorAll('th')).map(th => `"${th.innerText.replace(/"/g, '""')}"`);
+      if (ths.length > 0) rows.push(ths.join(','));
+
+      tbody.querySelectorAll('tr').forEach(tr => {
+        const tds = Array.from(tr.querySelectorAll('td')).map(td => `"${td.innerText.replace(/"/g, '""')}"`);
+        if (tds.length > 0) rows.push(tds.join(','));
+      });
+
+      if (rows.length === 0) return;
+      navigator.clipboard.writeText(rows.join('\n')).then(() => {
+        const txt = document.getElementById('copy-csv-text');
+        txt.innerText = 'CSV Copied!';
+        setTimeout(() => { txt.innerText = 'Copy CSV'; }, 2000);
+      });
+    }
+
+    // --- Custom Dataset Ingestion Handlers ---
+    async function submitCustomUpload() {
+      const fileInput = document.getElementById('upload-file-input');
+      const datasetType = document.getElementById('upload-dataset-type').value;
+      const mode = document.getElementById('upload-mode').value;
+      const statusText = document.getElementById('upload-status-text');
+      const submitBtn = document.getElementById('btn-submit-upload');
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Please select a CSV, Excel, or JSON file to upload.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('dataset_type', datasetType);
+      formData.append('mode', mode);
+
+      submitBtn.disabled = true;
+      statusText.innerText = `Ingesting ${file.name} into SQLite Lakehouse...`;
+
+      try {
+        const res = await fetch('/api/upload/dataset', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.detail) {
+          throw new Error(data.detail || "Upload failed");
+        }
+
+        statusText.innerText = `Ingested ${data.ingested_rows} rows successfully!`;
+
+        // Populate Result Card
+        document.getElementById('up-res-title').innerText = `${file.name} ingested (${data.details.action})`;
+        document.getElementById('up-res-rows').innerText = data.ingested_rows.toLocaleString('en-IN');
+        document.getElementById('up-res-pols').innerText = data.portfolio_summary.total_policies.toLocaleString('en-IN');
+        document.getElementById('up-res-exp').innerText = data.portfolio_summary.total_exposure_years.toLocaleString('en-IN') + ' Yrs';
+        document.getElementById('up-res-pp').innerText = formatINR(data.portfolio_summary.empirical_pure_premium, 2);
+
+        document.getElementById('upload-result-card').style.display = 'block';
+
+        // Refresh Summary KPI Cards immediately
+        loadSummary();
+        loadGoldMarts();
+
+      } catch (err) {
+        statusText.innerText = "Error: " + err.message;
+        alert("Upload error: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    function refreshAfterUpload() {
+      loadSummary();
+      loadGoldMarts();
+      runCustomQuery();
+      alert("All Lakehouse views, Gold marts, and KPI cards have been refreshed with the custom data!");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSummary();
+      loadGoldMarts();
+    });
+  </script>
+</body>
+</html>

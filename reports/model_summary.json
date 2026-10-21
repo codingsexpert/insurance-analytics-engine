@@ -1,0 +1,14 @@
+{
+  "portfolio_size": 50000,
+  "claims_count": 3648,
+  "metrics": {
+    "frequency_deviance_glm": 0.4055,
+    "frequency_deviance_booster": 0.4068,
+    "severity_deviance_glm": 1.1057,
+    "severity_deviance_booster": 1.2702,
+    "gini_tweedie": 0.3848,
+    "gini_two_part": 0.3508,
+    "fraud_pr_auc": 0.9288,
+    "fraud_roc_auc": 0.9907
+  }
+}
